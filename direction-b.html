@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Frame Score — B</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=IBM+Plex+Mono:wght@300;400;500&display=swap">
+</head>
+<body>
+  <main class="plate">
+    <div class="head-row">
+      <h1>Frame Score</h1>
+      <span class="eng">Grade a shot · hear the grade</span>
+    </div>
+
+    <div class="well">
+      <div class="frame" id="frame">
+        <canvas id="cv"></canvas>
+        <div class="head"></div>
+      </div>
+    </div>
+
+    <div class="deck">
+      <div class="slots"></div>
+      <div class="stack">
+        <button class="switch" id="run" aria-pressed="false">Run</button>
+        <div class="row"></div>
+        <div class="row">
+          <button class="switch" id="pick">Own frame</button>
+          <button class="switch" id="reset">Reset</button>
+        </div>
+        <div class="card"><dl></dl></div>
+      </div>
+    </div>
+  </main>
+  <input type="file" id="file" accept="image/*">
+  <script type="module" src="/src/skins/b/ui.js"></script>
+</body>
+</html>

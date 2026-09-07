@@ -1,0 +1,176 @@
+/* DIRECTION B — one material, one light (constraint C-05)
+   The whole interface is a single graphite plate lit from the top left. Nothing
+   floats: elements are either milled into the plate or raised out of it, and
+   every shadow and highlight obeys that one light. No glow, no gradients that
+   are not lighting, no second material. */
+
+:root {
+  --plate: #34363a;
+  --plate-hi: #43464b;
+  --plate-lo: #24262a;
+  --ink: #e9e6e0;
+  --engrave: #93958f;
+  --lamp: #e8b06a;
+
+  /* one light, top left, used by everything */
+  --raise: -1px -1px 0 rgba(255, 255, 255, 0.07), 2px 3px 6px rgba(0, 0, 0, 0.42);
+  --recess: inset 2px 3px 6px rgba(0, 0, 0, 0.55), inset -1px -1px 0 rgba(255, 255, 255, 0.06);
+
+  --disp: 'Fraunces', Georgia, serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--plate);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12px;
+  display: grid;
+  place-items: center;
+  padding: 34px 20px 60px;
+}
+
+.plate {
+  width: min(1080px, 100%);
+  padding: 30px 30px 26px;
+  background:
+    radial-gradient(120% 90% at 12% 4%, var(--plate-hi), transparent 62%),
+    var(--plate);
+  box-shadow: var(--raise);
+}
+
+.head-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+h1 {
+  font-family: var(--disp);
+  font-variation-settings: 'SOFT' 40, 'WONK' 1, 'opsz' 40;
+  font-weight: 600;
+  font-size: clamp(26px, 4vw, 40px);
+  line-height: 1;
+  margin: 0;
+  /* engraved: shadow above, highlight below — the same one light */
+  color: #cfcdc7;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.eng {
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--engrave);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* the frame sits in a well milled into the plate */
+.well {
+  position: relative;
+  padding: 9px;
+  background: var(--plate-lo);
+  box-shadow: var(--recess);
+}
+.frame { position: relative; overflow: hidden; }
+canvas { display: block; width: 100%; height: auto; }
+
+.head {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 12px 2px rgba(255, 255, 255, 0.25);
+  opacity: 0;
+  pointer-events: none;
+}
+.frame.playing .head { opacity: 1; }
+.frame.over { outline: 1px dashed var(--lamp); outline-offset: -6px; }
+
+.deck {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 26px;
+  margin-top: 24px;
+  align-items: start;
+}
+@media (max-width: 820px) { .deck { grid-template-columns: 1fr; } }
+
+/* four slots milled into the plate */
+.slots { display: flex; flex-direction: column; gap: 17px; }
+.slot { display: grid; grid-template-columns: 92px 1fr 62px; gap: 12px; align-items: center; }
+.slot .name { font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--engrave); }
+.slot .num { text-align: right; font-variant-numeric: tabular-nums; font-size: 12px; }
+
+.rail {
+  position: relative;
+  height: 9px;
+  border-radius: 5px;
+  background: var(--plate-lo);
+  box-shadow: var(--recess);
+  cursor: ew-resize;
+  touch-action: none;
+}
+.rail i {
+  position: absolute;
+  top: -4px;
+  width: 17px; height: 17px;
+  margin-left: -8.5px;
+  border-radius: 50%;
+  background: linear-gradient(160deg, var(--plate-hi), var(--plate-lo));
+  box-shadow: var(--raise);
+}
+.rail:focus-visible { outline: 1px solid var(--lamp); outline-offset: 4px; }
+
+.stack { display: flex; flex-direction: column; gap: 14px; min-width: 250px; }
+
+/* the switch is raised, and depresses when it is on */
+.switch {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: linear-gradient(160deg, var(--plate-hi), var(--plate));
+  border: 0;
+  padding: 13px 20px;
+  cursor: pointer;
+  box-shadow: var(--raise);
+}
+.switch[aria-pressed='true'] {
+  background: var(--plate-lo);
+  color: var(--lamp);
+  box-shadow: var(--recess);
+}
+.switch:focus-visible { outline: 1px solid var(--lamp); outline-offset: 3px; }
+
+.row { display: flex; gap: 9px; flex-wrap: wrap; }
+.chip {
+  width: 52px; height: 30px;
+  padding: 0;
+  border: 0;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  box-shadow: var(--raise);
+  filter: saturate(0.8);
+}
+.chip:focus-visible { outline: 1px solid var(--lamp); outline-offset: 3px; }
+
+/* the reading, engraved into the plate */
+.card { padding: 15px 16px; background: var(--plate-lo); box-shadow: var(--recess); }
+.card dl { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 7px 12px; }
+.card dt { font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--engrave); }
+.card dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.card dd em { font-style: normal; color: var(--lamp); }
+
+input[type='file'] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
