@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Frame Score</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=DM+Mono:wght@300;400;500&display=swap">
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Frame Score</h1>
+        <p>Grade a film frame and hear the grade. The shot is read in four vertical bands, left to right, and the colour of each becomes a chord — so the loop moves through the frame the way your eye does.</p>
+      </div>
+      <div class="rev lab">Project<b>v1.0 · activity</b></div>
+    </header>
+
+    <div class="stage">
+      <div>
+        <div class="frame" id="frame">
+          <canvas id="cv" width="1024" height="576"></canvas>
+          <div id="head"></div>
+          <div class="drop">Drop frame</div>
+        </div>
+        <div class="panel">
+          <div class="panel__hd"><span class="lab">Source</span><span class="lab" id="srcname">Plate 01 · interior, one lamp</span></div>
+          <div class="panel__bd">
+            <div class="plates" id="plates"></div>
+            <div class="btns" style="margin-top:10px">
+              <label class="filebtn" for="file" tabindex="0" role="button">Use my own frame</label>
+              <input type="file" id="file" accept="image/*">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel">
+          <div class="panel__hd"><span class="lab">Transport</span><span class="lab">Loop · 16.0 s</span></div>
+          <div class="panel__bd">
+            <div class="btns">
+              <button id="play" aria-pressed="false">Play</button>
+              <button id="reset">Reset grade</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__hd"><span class="lab">Grade</span><span class="lab">4 controls</span></div>
+          <div class="panel__bd" id="controls"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__hd"><span class="lab">Read</span><span class="lab">Frame → score</span></div>
+          <div class="panel__bd">
+            <table class="read"><tbody id="readout"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <b>What this is.</b> The frame is graded, downsampled and read, and every measurement is stretched against the range real photographs actually occupy — untouched, they all average out to mid-grey and every frame sounds identical. Chroma, not brightness, decides the palette, so a pastel sky is not mistaken for a saturated one. Each band takes the colour that makes it different from the rest of the frame, so a large background cannot collapse the progression onto one chord.<br><br>
+      <b>Activity is the axis that separates lively from hypnotic.</b> Detail, brightness and the absence of haze decide how long each note rings, how finely the phrase is placed, whether it restates twice inside a band, and how high it sits. Density alone was never liveliness.<br><br>
+      <b>Nothing is static.</b> Four voices hold the chord, each breathing on its own cycle — twenty-three seconds, twenty-seven, thirty-two, thirty-seven — so they never align the same way twice. Chords crossfade between two banks, so the harmony moves without any pitch sliding. There is no continuous noise anywhere: texture is crackle, eleven milliseconds at a time.
+    </footer>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
