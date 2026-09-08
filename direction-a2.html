@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Frame Score — A2</title>
+</head>
+<body>
+  <main class="bay">
+
+    <!-- the tape: what the instrument has measured, printed on its own face -->
+    <aside class="tape">
+      <p class="tape__id">Frame Score<i>no. 01</i></p>
+      <dl class="read" id="read"></dl>
+      <p class="tape__src" id="src"></p>
+    </aside>
+
+    <!-- the frame is the transport -->
+    <div class="frame" id="frame">
+      <canvas id="cv"></canvas>
+      <canvas id="marks"></canvas>
+      <div class="head"></div>
+      <p class="cue" id="cue">click to run</p>
+    </div>
+
+    <!-- printer points: the four grade controls, scrubbed as numerals -->
+    <div class="points" id="points"></div>
+
+    <div class="sources" id="sources"></div>
+
+  </main>
+  <input type="file" id="file" accept="image/*">
+  <script type="module" src="/src/skins/a2/ui.js"></script>
+</body>
+</html>

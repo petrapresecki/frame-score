@@ -1,0 +1,279 @@
+/* DIRECTION A2 — one continuous surface (C-03), rebuilt to a direction.
+ *
+ * Borrowed object: the colour-timing bay. The four grade controls are printer
+ * points — integers scrubbed on a tape, 25 at the datum — and the measurements
+ * the engine already makes are printed on the instrument's own face rather than
+ * hidden in a diagnostics panel.
+ *
+ * Ground: a saturated blue field. Type: Ribes (Luigi Gorlero / Collletttivo,
+ * SIL OFL), proportional, set as display.
+ * Colour: the field is fixed; the accent is sampled from the loaded frame and
+ * forced clear of the ground hue, so the image still decides.
+ */
+
+/* Ribes ships three static styles. They are declared over weight ranges so the
+   500 and 700 already used in this sheet resolve to the nearest cut Ribes has
+   rather than being synthesised by the browser. */
+@font-face {
+  font-family: 'Ribes';
+  src: url('/fonts/Ribes-Light.woff2') format('woff2');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Ribes';
+  src: url('/fonts/Ribes-Regular.woff2') format('woff2');
+  font-weight: 400 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Ribes';
+  src: url('/fonts/Ribes-Black.woff2') format('woff2');
+  font-weight: 600 900; font-style: normal; font-display: swap;
+}
+
+:root {
+  /* hue 229 — cyan-leaning, deliberately off the violet-blue of the sites this
+     was compared against */
+  --field: #0a38ff;
+  --field-deep: #0722a8;
+  --ink: #eaf0ff;
+  --ink-half: rgba(234, 240, 255, 0.5);
+  --ink-quarter: rgba(234, 240, 255, 0.26);
+  --accent: #ffb03a;          /* replaced on every render from the frame */
+  --face: 'Ribes', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--field);
+  color: var(--ink);
+  font-family: var(--face);
+  font-weight: 400;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- the bay ------------------------------------------------------------
+   Asymmetric on purpose: the tape is a narrow fixed column, the frame sits
+   right of centre, and the points run under it. Nothing is centred. */
+.bay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  column-gap: clamp(24px, 5vw, 88px);
+  padding: 26px 34px 22px;
+}
+
+/* ---- the tape ------------------------------------------------------------ */
+.tape {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  margin: 0;
+}
+
+.tape__id {
+  margin: 0 0 22px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.tape__id i { font-style: normal; font-weight: 400; color: var(--ink-half); }
+
+.read {
+  margin: 0;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  /* Ribes has no tabular figures, so the value column is given a fixed
+     width — otherwise the dt/dd boundary shifts every time a value updates. */
+  grid-template-columns: minmax(0, 1fr) 84px;
+  align-content: start;
+  gap: 0;
+  font-size: 11.5px;
+  line-height: 1.9;
+  font-variant-numeric: tabular-nums;
+}
+.read dt { color: var(--ink-quarter); }
+.read dd {
+  margin: 0;
+  text-align: right;
+  color: var(--ink);
+  transition: color 0.9s ease;
+}
+/* a value that just moved is briefly the accent — the only motion in the tape */
+.read dd.hot { color: var(--accent); transition: none; }
+
+/* the mode is the one line allowed to be loud */
+.read dd.mode {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.tape__src {
+  margin: 18px 0 0;
+  font-size: 11.5px;
+  color: var(--ink-half);
+  border-top: 1px solid rgba(234, 240, 255, 0.18);
+  padding-top: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- the frame ----------------------------------------------------------- */
+.frame {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  justify-self: start;
+  width: 100%;
+  max-width: min(100%, calc((100vh - 210px) * 16 / 9));
+  aspect-ratio: 16 / 9;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+.frame canvas { display: block; width: 100%; height: 100%; }
+
+/* the marks are drawn over the frame, never into it — the graded pixels stay
+   exactly what the analysis reads */
+#marks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.frame:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+
+.head {
+  position: absolute;
+  top: -8px; bottom: -8px;
+  width: 2px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 1.4s ease;
+  pointer-events: none;
+}
+.frame.playing .head { opacity: 1; }
+
+/* the cue is set at the size of a caption and leaves the moment it is obeyed */
+.cue {
+  position: absolute;
+  left: 0; bottom: -26px;
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--ink-half);
+  transition: opacity 1.1s ease 0.2s;
+}
+.cue.gone { opacity: 0; }
+
+.frame.over::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--field-deep);
+  outline: 2px solid var(--accent);
+  outline-offset: -8px;
+}
+
+/* ---- printer points -----------------------------------------------------
+   Four integers on a datum of 25. The numeral is the control: drag it. */
+.points {
+  grid-column: 2;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(12px, 3vw, 54px);
+  align-items: end;
+  padding-top: 34px;
+  max-width: min(100%, calc((100vh - 210px) * 16 / 9));
+}
+
+.pt {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: ew-resize;
+  touch-action: none;
+  display: block;
+  outline: none;
+}
+
+.pt__n {
+  display: block;
+  font-size: clamp(38px, 6.4vw, 82px);
+  font-weight: 500;
+  line-height: 0.82;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.pt.off .pt__n { color: var(--accent); }
+
+.pt__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 11px;
+  padding-top: 7px;
+  border-top: 1px solid rgba(234, 240, 255, 0.28);
+  font-size: 11.5px;
+  line-height: 1;
+}
+.pt__k { color: var(--ink); }
+.pt__v { color: var(--ink-half); font-variant-numeric: tabular-nums; }
+
+.pt:focus-visible .pt__foot { border-top-color: var(--accent); }
+.pt:focus-visible .pt__k { color: var(--accent); }
+
+/* ---- sources ------------------------------------------------------------
+   Three plates and your own file, as a line of numerals — no thumbnails, so
+   nothing on the page competes with the frame. */
+.sources {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: end;
+  display: flex;
+  gap: 14px;
+  font-size: 11.5px;
+}
+.sources button {
+  border: 0; padding: 0; background: none;
+  font: inherit;
+  color: var(--ink-quarter);
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+.sources button:hover,
+.sources button:focus-visible { color: var(--accent); outline: none; }
+.sources button[aria-current='true'] { color: var(--ink); }
+
+input[type='file'] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+
+@media (max-width: 900px) {
+  .bay { grid-template-columns: 1fr; grid-template-rows: auto minmax(0,1fr) auto; padding: 18px 20px; }
+  .tape { grid-row: 1; }
+  .read { display: none; }
+  .points, .sources { grid-column: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
