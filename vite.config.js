@@ -1,21 +1,10 @@
 import { defineConfig } from 'vite'
-import { fileURLToPath } from 'node:url'
-
-const here = p => fileURLToPath(new URL(p, import.meta.url))
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   base: './',
+  plugins: [react(), tailwindcss()],
   server: { port: 5178, open: false },
-  build: {
-    outDir: 'dist',
-    rollupOptions: {
-      input: {
-        instrument: here('index.html'),
-        a: here('direction-a.html'),
-        a2: here('direction-a2.html'),
-        b: here('direction-b.html'),
-        c: here('direction-c.html'),
-      },
-    },
-  },
+  build: { outDir: 'dist' },
 })

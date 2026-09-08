@@ -87,15 +87,30 @@ Each of these was built, heard, and rejected. `LOG.md` has the detail.
 
 ## Layout
 
-| file              | what it holds                                                                                   |
-| ----------------- | ----------------------------------------------------------------------------------------------- |
-| `src/grade.js`    | the four grade controls as pixel maths — one implementation, used for both display and analysis |
-| `src/analysis.js` | graded frame → measurements                                                                     |
-| `src/music.js`    | measurements → musical decisions (modes, voicings, progression, motif, activity)                |
-| `src/engine.js`   | the Tone.js graph and the sequencer                                                             |
-| `src/readout.js`  | the diagnostic panel                                                                            |
-| `src/plates.js`   | placeholder frames drawn in code                                                                |
-| `LOG.md`          | the build log — what was tried and killed, and why                                              |
+The instrument is plain JavaScript; the interface is React (Vite, Tailwind v4).
+The split is the point: nothing below `core.js` knows React exists.
+
+| file                          | what it holds                                                                                   |
+| ----------------------------- | ----------------------------------------------------------------------------------------------- |
+| `src/grade.js`                | the four grade controls as pixel maths — one implementation, used for both display and analysis |
+| `src/analysis.js`             | graded frame → measurements                                                                     |
+| `src/music.js`                | measurements → musical decisions (modes, voicings, progression, motif, activity)                |
+| `src/engine.js`               | the Tone.js graph and the sequencer                                                             |
+| `src/plates.js`               | placeholder frames drawn in code                                                                |
+| `src/core.js`                 | the instrument: canvas, grade state, analysis and engine, behind a listener                     |
+| `src/useFrameScore.js`        | the one hook that holds `Core` in a ref and hands React the last reading                        |
+| `src/App.jsx`                 | direction A2, the bay: tape left, frame right, points beneath                                   |
+| `src/components/Tape.jsx`     | the readout, printed on the instrument's own face                                               |
+| `src/components/Frame.jsx`    | the frame as transport, and the marks drawn over it                                             |
+| `src/components/PrinterPoints.jsx` | the four grade controls as scrubbed numerals                                               |
+| `src/components/Sources.jsx`  | plates and your own file, as numerals                                                           |
+| `src/skin.css`                | the Tailwind theme: field, ink, Ribes. The accent is a live custom property, never a token      |
+| `LOG.md`                      | the build log — what was tried and killed, and why                                              |
+
+`Core` is deliberately not React state — it owns a canvas, an imperative Tone.js
+graph and its own scheduling. React holds only `{ A, M, grade, sourceName }`.
+`main.jsx` does not use `StrictMode`: a double-invoked mount would build a second
+Tone.js graph and leave the first one running.
 
 ## Working on it
 

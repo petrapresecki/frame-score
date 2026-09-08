@@ -1,0 +1,65 @@
+@import 'tailwindcss';
+
+/* DIRECTION A2 — one continuous surface (C-03).
+ *
+ * Borrowed object: the colour-timing bay. The four grade controls are printer
+ * points — integers scrubbed on a tape, 25 at the datum — and the measurements
+ * the engine already makes are printed on the instrument's own face rather than
+ * hidden in a diagnostics panel.
+ *
+ * Ground: a saturated blue field. Type: Ribes (Luigi Gorlero / Collletttivo,
+ * SIL OFL), proportional, set as display.
+ * Colour: the field is fixed; the accent is sampled from the loaded frame and
+ * forced clear of the ground hue, so the image still decides. It is a live
+ * custom property, set on the bay on every render — never a Tailwind colour.
+ */
+
+/* Ribes ships three static styles. They are declared over weight ranges so the
+   500 and 700 used in the components resolve to the nearest cut Ribes has
+   rather than being synthesised by the browser. */
+@font-face {
+  font-family: 'Ribes';
+  src: url('/fonts/Ribes-Light.woff2') format('woff2');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Ribes';
+  src: url('/fonts/Ribes-Regular.woff2') format('woff2');
+  font-weight: 400 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Ribes';
+  src: url('/fonts/Ribes-Black.woff2') format('woff2');
+  font-weight: 600 900; font-style: normal; font-display: swap;
+}
+
+@theme {
+  /* hue 229 — cyan-leaning, deliberately off the violet-blue of the sites this
+     was compared against */
+  --color-field: #0a38ff;
+  --color-field-deep: #0722a8;
+  --color-ink: #eaf0ff;
+  --color-ink-half: rgba(234, 240, 255, 0.5);
+  --color-ink-quarter: rgba(234, 240, 255, 0.26);
+  --color-rule: rgba(234, 240, 255, 0.28);
+  --color-rule-faint: rgba(234, 240, 255, 0.18);
+  --font-display: 'Ribes', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body {
+    background: var(--color-field);
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-weight: 400;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* the accent before a frame has been read */
+  #root { --accent: #ffb03a; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}

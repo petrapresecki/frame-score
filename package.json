@@ -9,9 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "tone": "^14.7.77"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^4.7.0",
+    "tailwindcss": "^4.3.3",
     "vite": "^5.4.10"
   },
   "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"

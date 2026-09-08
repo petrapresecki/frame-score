@@ -29,4 +29,7 @@ use public-domain sources.
 - `src/music.js` — turns measurements into musical decisions.
 - `src/engine.js` — the Tone.js graph and the sequencer.
 - `src/plates.js` — placeholder frames drawn in code.
-- `src/ui.js` — controls, readout, transport.
+- `src/core.js` — the instrument: canvas, grade state, analysis and engine. Plain
+  JavaScript, and the last file that knows nothing about the interface.
+- `src/App.jsx`, `src/components/` — the interface, in React. Tailwind v4 for
+  styling; the accent colour is sampled from the frame at runtime.

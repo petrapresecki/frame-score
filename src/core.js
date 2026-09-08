@@ -1,8 +1,7 @@
-// Everything a skin needs, and nothing about how it looks.
+// Everything the interface needs, and nothing about how it looks.
 //
-// The three design directions share this file completely. If a direction ever
-// needs the engine changed to work, that is worth knowing — so the split is
-// kept honest here.
+// This file knows about a canvas and nothing else — no layout, no React. Drag,
+// drop and file input are the interface's job; it calls loadFile.
 
 import { PARAMS, gradePixels } from './grade.js'
 import { analyse, AW, AH } from './analysis.js'
@@ -134,26 +133,9 @@ export class Core {
 
   get playing() { return this.engine.playing }
   get progress() { return this.engine.progress }
-
-  // drag-and-drop, shared by every skin
-  dropTarget(el, onOver) {
-    for (const ev of ['dragenter', 'dragover']) {
-      el.addEventListener(ev, e => { e.preventDefault(); onOver?.(true) })
-    }
-    for (const ev of ['dragleave', 'drop']) {
-      el.addEventListener(ev, e => { e.preventDefault(); onOver?.(false) })
-    }
-    el.addEventListener('drop', e => this.loadFile(e.dataTransfer.files[0]))
-    return this
-  }
-
-  fileInput(input) {
-    input.addEventListener('change', () => this.loadFile(input.files[0]))
-    return this
-  }
 }
 
-// for the measuring harness, in every skin
+// for the measuring harness
 export function expose(core) {
   window.__load = url => core.loadURL(url)
   window.__core = core
