@@ -88,6 +88,7 @@ export function render() {
   paint(readoutEl, A, M)
   engine.apply(A, M)
   window.__frameScore = { A, M }        // for measuring from the console
+  window.__engine = engine              // so the rendered audio can be measured too
 }
 
 // ---- transport ------------------------------------------------------------
