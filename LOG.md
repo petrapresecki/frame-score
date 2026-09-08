@@ -258,3 +258,55 @@ Saturation to zero, because a frame whose colour is trusted stops thrashing.
 The four that remain are `tone` genuinely reversing when exposure starts
 crushing highlights, which is the mapping being honest rather than flutter.
 
+## 2026-09-08 — FIX 14, stereo
+
+The frame is read left to right and now it sounds left to right. The bed sits
+where its band sits, notes sound where they were found in the picture, dust
+falls anywhere, and the bass stays centred so a phone speaker keeps it.
+
+Each bank carries one band's chord, so the bank is what moves. Its pan is set
+outright while it is still silent, in the moment before it fades in — no pan
+ever slides underneath a sounding voice, for the same reason no pitch does.
+
+The melody cannot work that way: a note rings for seconds, so its position
+cannot be moved after it starts. There are five fixed positions instead, each
+with its own bell and its own hammer, and every note is played from the one
+nearest to where it was found. Width and centre come from FIX 8 — a
+concentrated subject gathers the sound, an even field spreads it.
+
+Measured in a real browser, dry, above 300 Hz, per band, left to right:
+
+    Budapest        -0.61  -0.19  +0.15  +0.62
+    The Third Man   -0.04  -0.07  +0.04  +0.25
+
+### Killed: two measurements that were wrong before the code was
+
+Nearly reported two bugs that were not bugs.
+
+The first per-band reading showed no movement at all on half the frames. The
+probe had set the bank pans and then waited four seconds — during which
+`goToBand` fired and overwrote them. It was measuring ordinary playback.
+
+The second showed the image collapsing on every spacious frame. A full-band RMS
+is dominated by the bass, and the bass is centred deliberately. The stereo image
+has to be measured above it.
+
+### The melody was never sounding
+
+`scatter()` schedules crackle at random positions inside the tick, and one synth
+cannot be triggered out of chronological order — Tone throws "time must be
+greater than or equal to the last scheduled time". That throw happened inside
+`tick()` **before** the motif loop, so every note of the melody was being lost
+with it, on every tick that scattered more than one impulse. Pre-existing, found
+only because the audio was finally being measured rather than assumed. The
+offsets are sorted now.
+
+### Open: the bass stops being a bass on bright frames
+
+`bass = chord root / 4`, and the chord root follows the register. On Fargo, at
+octave 2, that puts the bass at about **293 Hz** — not a bass, a mid-range tone,
+sitting in the same range as the bed at roughly 20 dB louder, and centred, which
+flattens the stereo image to nothing. With it muted Fargo sweeps normally.
+Clamping it to a real bass range would fix both. Her call: it changes what every
+bright frame sounds like.
+

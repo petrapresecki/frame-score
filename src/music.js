@@ -213,6 +213,8 @@ function buildMotif(A, s, M) {
       slot,
       semi: s[Math.min(s.length - 1, Math.floor(yy * s.length))],
       vel: Math.min(0.9, 0.18 + ((p.v - A.low) / Math.max(0.15, A.range)) * 0.5),
+      // where in the frame the note was found, -1 left to +1 right
+      pan: (p.i / Math.max(1, A.peak.length - 1)) * 2 - 1,
     }
   }).sort((a, b) => a.slot - b.slot)
 }
