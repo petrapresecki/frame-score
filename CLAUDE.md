@@ -26,8 +26,8 @@ build config and debugging.
 - **Propose before changing direction.** She has asked explicitly for proposals
   in chat before new work, so she can agree the direction first. Bug fixes and
   regressions you caused are exceptions — just fix those.
-- She is not a musician and will direct by feel: *colder, emptier, too pretty,
-  sounds like sirens*. That is usable feedback. Translate it into parameters
+- She is not a musician and will direct by feel: _colder, emptier, too pretty,
+  sounds like sirens_. That is usable feedback. Translate it into parameters
   yourself and say what you changed and why.
 - If you disagree, say so once, plainly, then do what she decided.
 
@@ -37,13 +37,13 @@ build config and debugging.
 - **The image decides everything.** Depth comes from the frame, not from adding
   controls. Do not solve a problem by adding a slider — that is the hedge she
   already rejected.
-- **Creative *and* useful.** She dislikes style-over-substance sites. It has to
+- **Creative _and_ useful.** She dislikes style-over-substance sites. It has to
   actually work as a tool.
 - **It should never cut.** Her argument: everything now is chopped into pieces to
   hold your attention. Navigation should read as a continuous move, not a page
   change. This applies when the UI grows past one screen.
 - Fashion and cinema are the **lens**, not the subject. Light, contrast,
-  reflection, composition, the ordinary made beautiful. The piece is not *about*
+  reflection, composition, the ordinary made beautiful. The piece is not _about_
   film, and it must not become noir pastiche or a Blade Runner shader demo.
 
 ## Sound constraints learned by ear — do not reintroduce these
@@ -60,7 +60,7 @@ Each of these was built, heard, and rejected. `LOG.md` has the detail.
   and reads as a distant whistle.
 - **No risers or filter sweeps.** A noise swell into each band change reads as
   wind. She rejected this twice.
-- **No continuous noise source of any kind.** Pink noise through a bandpass *is*
+- **No continuous noise source of any kind.** Pink noise through a bandpass _is_
   wind synthesis. Texture is crackle: 11 ms impulses scattered at random
   positions, like dust on a needle.
 - **Everything stays in key.** One mode, hand-written voicings stacked inside it,
@@ -73,7 +73,7 @@ Each of these was built, heard, and rejected. `LOG.md` has the detail.
   is stretched against the range real photographs occupy** — untouched, all
   photographs average to mid-grey and every frame sounds identical.
 - **Four vertical bands, left to right, become four chords.** Each band takes the
-  hue that makes it *different* from the frame as a whole, so a large background
+  hue that makes it _different_ from the frame as a whole, so a large background
   cannot collapse the progression onto one chord.
 - **The brightest point of each column becomes the melody** — not the column
   average, which washes out composition. Height in frame is pitch. The strongest
@@ -87,15 +87,15 @@ Each of these was built, heard, and rejected. `LOG.md` has the detail.
 
 ## Layout
 
-| file | what it holds |
-|---|---|
-| `src/grade.js` | the four grade controls as pixel maths — one implementation, used for both display and analysis |
-| `src/analysis.js` | graded frame → measurements |
-| `src/music.js` | measurements → musical decisions (modes, voicings, progression, motif, activity) |
-| `src/engine.js` | the Tone.js graph and the sequencer |
-| `src/readout.js` | the diagnostic panel |
-| `src/plates.js` | placeholder frames drawn in code |
-| `LOG.md` | the build log — what was tried and killed, and why |
+| file              | what it holds                                                                                   |
+| ----------------- | ----------------------------------------------------------------------------------------------- |
+| `src/grade.js`    | the four grade controls as pixel maths — one implementation, used for both display and analysis |
+| `src/analysis.js` | graded frame → measurements                                                                     |
+| `src/music.js`    | measurements → musical decisions (modes, voicings, progression, motif, activity)                |
+| `src/engine.js`   | the Tone.js graph and the sequencer                                                             |
+| `src/readout.js`  | the diagnostic panel                                                                            |
+| `src/plates.js`   | placeholder frames drawn in code                                                                |
+| `LOG.md`          | the build log — what was tried and killed, and why                                              |
 
 ## Working on it
 
@@ -110,8 +110,8 @@ exist so that can't happen silently — use them.
 Measuring without hearing anything:
 
 ```js
-await window.__load('/frames/budapest.jpg')
-window.__frameScore        // { A, M } — every measurement and every decision
+await window.__load("/frames/budapest.jpg");
+window.__frameScore; // { A, M } — every measurement and every decision
 ```
 
 The **Read** panel is the tuning instrument. Load two frames, compare the
