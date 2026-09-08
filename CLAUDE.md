@@ -107,6 +107,13 @@ The split is the point: nothing below `core.js` knows React exists.
 | `src/skin.css`                | the Tailwind theme: field, ink, Ribes. The accent is a live custom property, never a token      |
 | `LOG.md`                      | the build log — what was tried and killed, and why                                              |
 
+The picture never works out what is sounding for itself. `Engine.say` schedules
+an event through `Tone.Draw` at the audio time a note is struck, a band changes
+or dust falls, and `core.tap(fn)` is how the interface hears them — `on` is the
+reading, `tap` is the performance. Anything that re-derives the step from
+`Tone.Transport.progress` is keeping a second copy of the motif rules, and the
+two drift apart the first time a tick is late.
+
 `Core` is deliberately not React state — it owns a canvas, an imperative Tone.js
 graph and its own scheduling. React holds only `{ A, M, grade, sourceName }`.
 `main.jsx` does not use `StrictMode`: a double-invoked mount would build a second

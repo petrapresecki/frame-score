@@ -6,9 +6,8 @@ import { useEffect, useRef, useState } from 'react'
 // so a note is marked as a rule at its own height — the mark is the mapping,
 // not an effect.
 const BANDS = 4
-const STEPS = 16 * BANDS
 
-export function Frame({ core, canvasRef, playing, onToggle, cueGone }) {
+export function Frame({ core, canvasRef, playing }) {
   const wrapRef = useRef(null)
   const marksRef = useRef(null)
   const headRef = useRef(null)
@@ -16,39 +15,71 @@ export function Frame({ core, canvasRef, playing, onToggle, cueGone }) {
 
   useEffect(() => {
     if (!core) return
-    const wrap = wrapRef.current
     const mctx = marksRef.current.getContext('2d')
     let marks = []
-    let lastStep = -1
+    let band = 0
     let raf = 0
 
-    function fire(step) {
-      const { A, M } = core
-      if (!A || !M) return
-      const bi = Math.floor(step / 16)
-      const span = 16 / M.repeats
-      const within = (step % 16) % span
-      const last = M.motif.length ? M.motif[M.motif.length - 1].slot : -1
-      const cols = A.peak.length
+    // A mark is struck because the engine said it struck a note — this used to
+    // re-derive the step from the transport and keep its own copy of the motif
+    // rules, which is two copies of one truth and drifts apart. The engine now
+    // says what it played, and the peak column it was measured from is looked
+    // up from the same pan the note was played at.
+    const untap = core.tap(e => {
+      if (e.k === 'band') { band = e.band; return }
+      if (e.k !== 'note') return
+      const A = core.A
+      if (!A) return
+      const x = (e.found + 1) / 2
+      const col = Math.round(x * (A.peak.length - 1))
+      marks.push({ x, y: A.peakY[col], band: e.band, vel: e.vel, born: performance.now() })
+    })
 
-      for (const m of M.motif) {
-        if (m.slot !== within) continue
-        if (bi === 1 && m.slot === last) continue   // the engine drops band two's tail
-        const x = ((m.pan ?? 0) + 1) / 2
-        const col = Math.round(x * (cols - 1))
-        marks.push({ x, y: A.peakY[col], band: bi, vel: m.vel, born: performance.now() })
-      }
+    // The marks canvas is sized in CSS pixels, explicitly, and here is why.
+    //
+    // It used to be laid out with `absolute inset-0` and no width or height.
+    // That stretches a div, but a canvas is a *replaced* element, and for those
+    // `width: auto` resolves to the intrinsic width — the backing store — with
+    // the over-constrained `right` simply ignored. So the element's CSS size
+    // was `cv.width × cv.height`, which this function sets to w·dpr × h·dpr:
+    // on a 2× display the overlay was laid out at twice the size of the shot,
+    // and the band edges and pitch rules spilled past the picture onto the
+    // field. (Band 0's two edges landing at 0 and w/2 rather than 0 and w/4 is
+    // the signature.)
+    //
+    // It was latent rather than new: while the first pass ran at zero size the
+    // backing store stayed 0, so the overlay was invisible instead of wrong.
+    // Fixing the loop and the resize check is what made it show.
+    //
+    // Everything is measured from the picture canvas, not the wrapper, so the
+    // marks are anchored to the shot itself whatever the box around it does.
+    function place(pic, w, h) {
+      const cv = marksRef.current
+      const l = pic.offsetLeft, t = pic.offsetTop
+      if (cv._l === l && cv._t === t && cv._w === w && cv._h === h) return
+      cv._l = l; cv._t = t; cv._w = w; cv._h = h
+      cv.style.left = `${l}px`
+      cv.style.top = `${t}px`
+      cv.style.width = `${w}px`
+      cv.style.height = `${h}px`
+      // the playhead overhangs the shot by 8px top and bottom, and nothing else
+      const head = headRef.current
+      head.style.left = `${l}px`
+      head.style.top = `${t - 8}px`
+      head.style.height = `${h + 16}px`
     }
 
     function drawMarks(now) {
-      const w = wrap.clientWidth, h = wrap.clientHeight
+      const pic = canvasRef.current
+      if (!pic) return
+      const w = pic.clientWidth, h = pic.clientHeight
       if (!w || !h) return        // laid out at zero: nothing to draw on yet
+      place(pic, w, h)
       const cv = marksRef.current
       const dpr = Math.min(2, window.devicePixelRatio || 1)
-      if (cv.width !== Math.round(w * dpr)) {
-        cv.width = Math.round(w * dpr)
-        cv.height = Math.round(h * dpr)
-      }
+      const pw = Math.round(w * dpr), ph = Math.round(h * dpr)
+      // both are checked: the shot can change height without changing width
+      if (cv.width !== pw || cv.height !== ph) { cv.width = pw; cv.height = ph }
       mctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       mctx.clearRect(0, 0, w, h)
       if (!core.playing) return
@@ -58,7 +89,7 @@ export function Frame({ core, canvasRef, playing, onToggle, cueGone }) {
       // having happened
       const life = Math.min(2600, Math.max(480, (core.M?.noteLen ?? 1) * 1000))
       const bw = w / BANDS
-      const bi = Math.min(BANDS - 1, Math.floor(core.progress * BANDS))
+      const bi = band
 
       // These are drawn on the picture, not on the field, so they cannot use
       // the sampled accent: on a warm frame a warm accent is invisible.
@@ -106,22 +137,24 @@ export function Frame({ core, canvasRef, playing, onToggle, cueGone }) {
       mctx.globalAlpha = 1
     }
 
+    // The loop never stops. Ending it on pause left the playhead parked
+    // wherever the last frame caught it and froze the marks mid-decay, while
+    // the engine's own release fade was still sounding for the best part of a
+    // second — the transport is a fade, so the picture has to fade with it.
     function sweep(now = performance.now()) {
-      if (!core.playing) { drawMarks(now); marks = []; lastStep = -1; return }
-      headRef.current.style.transform = `translateX(${core.progress * wrap.clientWidth}px)`
-      const step = Math.min(STEPS - 1, Math.floor(core.progress * STEPS))
-      if (step !== lastStep) { lastStep = step; fire(step) }
-      drawMarks(now)
       raf = requestAnimationFrame(sweep)
+      if (!core.playing) { drawMarks(now); marks = []; return }
+      drawMarks(now)
+      const pic = canvasRef.current
+      if (pic) headRef.current.style.transform = `translateX(${core.progress * pic.clientWidth}px)`
     }
 
     // the marks are driven by requestAnimationFrame, which a headless or hidden
     // window throttles to nothing — so they can be stepped by hand to be measured
     window.__marks = () => marks.map(m => ({ ...m, age: performance.now() - m.born }))
-    window.__tick = step => { fire(step); drawMarks(performance.now()); return marks.length }
 
     sweep()
-    return () => cancelAnimationFrame(raf)
+    return () => { cancelAnimationFrame(raf); untap() }
   }, [core, playing])
 
   const drop = e => {
@@ -131,43 +164,28 @@ export function Frame({ core, canvasRef, playing, onToggle, cueGone }) {
   }
 
   return (
+    // The gate's contents. Sizing, the spin gesture, click-to-run and the cue
+    // belong to the Reel — this is only ever the picture at the gate.
     <div
       ref={wrapRef}
-      tabIndex={0}
-      onClick={onToggle}
-      onKeyDown={e => {
-        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); onToggle() }
-      }}
       onDragEnter={e => { e.preventDefault(); setOver(true) }}
       onDragOver={e => { e.preventDefault(); setOver(true) }}
       onDragLeave={e => { e.preventDefault(); setOver(false) }}
       onDrop={drop}
-      className="relative col-start-2 row-start-1 aspect-video w-full max-w-[min(100%,calc((100vh_-_210px)*16/9))]
-                 cursor-pointer select-none justify-self-start self-center outline-none
-                 focus-visible:shadow-[0_0_0_2px_var(--accent)]
-                 max-[900px]:col-start-1 max-[900px]:row-start-2"
+      className="absolute inset-0 select-none"
     >
       <canvas ref={canvasRef} className="block h-full w-full" />
 
       {/* the marks are drawn over the frame, never into it — the graded pixels
           stay exactly what the analysis reads */}
-      <canvas ref={marksRef} className="pointer-events-none absolute inset-0" />
+      <canvas ref={marksRef} className="pointer-events-none absolute" />
 
       <div
         ref={headRef}
-        className={`pointer-events-none absolute -top-2 -bottom-2 w-0.5 bg-[var(--accent)]
+        className={`pointer-events-none absolute w-0.5 bg-[var(--accent)]
                     transition-opacity duration-[1400ms] ease-out
                     ${playing ? 'opacity-100' : 'opacity-0'}`}
       />
-
-      {/* the cue is set at the size of a caption and leaves the moment it is obeyed */}
-      <p
-        className={`absolute left-0 -bottom-[26px] m-0 text-[11.5px] text-ink-half
-                    transition-opacity delay-200 duration-[1100ms] ease-out
-                    ${cueGone ? 'opacity-0' : 'opacity-100'}`}
-      >
-        click to run
-      </p>
 
       {over && (
         <div className="absolute inset-0 bg-field-deep outline-2 -outline-offset-8 outline-[var(--accent)]" />

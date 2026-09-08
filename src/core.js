@@ -37,6 +37,10 @@ export class Core {
 
   on(fn) { this.listeners.push(fn); return this }
 
+  // a reading is a decision; a tap is an event. The interface listens to `on`
+  // for what the frame measured and to `tap` for what the engine just played.
+  tap(fn) { this.engine.on(fn); return () => this.engine.off(fn) }
+
   set(k, v) { this.G[k] = v; this.schedule() }
 
   reset() {
@@ -99,14 +103,19 @@ export class Core {
     img.src = url
   }
 
-  loadURL(url) {
-    return new Promise(res => {
+  loadURL(url, name) {
+    return new Promise((res, rej) => {
       const img = new Image()
+      // Without this the canvas is tainted and getImageData throws, which would
+      // take the analysis down with it. image.tmdb.org sends
+      // access-control-allow-origin: *, so the request is honoured.
+      img.crossOrigin = 'anonymous'
       img.onload = () => {
         this.src = this.fit(img)
-        this.sourceName = url.split('/').pop()
+        this.sourceName = name ?? url.split('/').pop()
         res(this.render())
       }
+      img.onerror = () => rej(new Error(`could not load ${url}`))
       img.src = url
     })
   }
@@ -133,6 +142,7 @@ export class Core {
 
   get playing() { return this.engine.playing }
   get progress() { return this.engine.progress }
+  get level() { return this.engine.level }
 }
 
 // for the measuring harness

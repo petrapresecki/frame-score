@@ -50,7 +50,7 @@ export function Tape({ reading }) {
   const { A, M, sourceName } = reading ?? {}
 
   return (
-    <aside className="col-start-1 row-start-1 m-0 flex min-h-0 flex-col">
+    <aside className="m-0 flex min-h-0 flex-1 flex-col">
       <p className="m-0 mb-[22px] flex items-baseline justify-between text-[13px] font-bold leading-none">
         Frame Score<i className="not-italic font-normal text-ink-half">no. 01</i>
       </p>

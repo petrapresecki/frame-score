@@ -23,12 +23,32 @@ const DUR = LOOP / STEPS          // 0.25 s
 // five fixed positions and every note is played from the nearest one.
 const ZONES = [-0.85, -0.45, 0, 0.45, 0.85]
 
+// seconds to fade the whole graph in and out — long enough not to click, short
+// enough that pause means pause
+const IN = 0.25
+const OUT = 0.9
+
 const BREATH = [
   { rate: 1 / 23, lo: 0.03, hi: 0.55, type: 'sawtooth', vol: -30 },
   { rate: 1 / 27, lo: 0.02, hi: 0.42, type: 'triangle', vol: -24 },
   { rate: 1 / 32, lo: 0.05, hi: 0.60, type: 'triangle', vol: -27 },
   { rate: 1 / 37, lo: 0.02, hi: 0.38, type: 'sawtooth', vol: -31 },
 ]
+
+// The bed made visible.
+//
+// These are the same four cycles the bed oscillators' gains are riding, and
+// they are recomputed rather than sampled: an AudioParam driven by a connected
+// LFO does not report the LFO's contribution in `.value`. Same rates, same
+// phases, so a picture drawn from this cannot look periodic while the sound is
+// not — which is the whole point of 23/27/32/37.
+export function breathAt(t, bank = 0) {
+  return BREATH.map((v, i) => {
+    const x = (t * v.rate * (bank ? 1.07 : 1) + ((i * 67 + bank * 41) % 360) / 360) % 1
+    const u = v.type === 'sawtooth' ? x : x < 0.5 ? x * 2 : 2 - x * 2
+    return v.lo + (v.hi - v.lo) * u
+  })
+}
 
 export class Engine {
   constructor() {
@@ -42,11 +62,33 @@ export class Engine {
     this.width = 1
     this.centre = 0
     this.M = null
+    this.taps = []
   }
+
+  // What is sounding, said at the moment it sounds.
+  //
+  // The picture used to work this out for itself: it re-derived the step from
+  // Tone.Transport.progress and kept its own copy of the motif rules, down to
+  // band two dropping its tail. Two copies of one set of rules drift — a
+  // dropped tick or a slow grade pass desynchronises them for good, and then
+  // the marks are showing a performance nobody is hearing. So the engine says
+  // what it did, and the picture only ever draws that.
+  //
+  // Tone.Draw is what makes it exact: the callback lands on the animation
+  // frame nearest the audio time the note was scheduled for, not the frame the
+  // scheduler happened to run on.
+  on(fn) { this.taps.push(fn); return this }
+  off(fn) { this.taps = this.taps.filter(f => f !== fn) }
+  say(time, e) { Tone.Draw.schedule(() => { for (const fn of this.taps) fn(e) }, time) }
 
   build() {
     if (this.built) return
-    this.glue = new Tone.Compressor({ threshold: -20, ratio: 2.4, attack: 0.06, release: 0.28 }).toDestination()
+    // The bed is free-running: its oscillators and their breathing LFOs are
+    // started once and never scheduled on the Transport, so stopping the
+    // Transport stops the sequencer and leaves the drone sounding. Everything
+    // therefore passes through one gain, and that gain is what silence means.
+    this.out = new Tone.Gain(1).toDestination()
+    this.glue = new Tone.Compressor({ threshold: -20, ratio: 2.4, attack: 0.06, release: 0.28 }).connect(this.out)
     this.reverb = new Tone.Reverb({ decay: 11, preDelay: 0.04, wet: 0.5 }).connect(this.glue)
 
     // a few cents of tape unsteadiness, on the struck notes only — on sustained
@@ -140,6 +182,8 @@ export class Engine {
       this.pad.triggerAttackRelease([f[1], f[2], f[3]], (LOOP / BANDS) * 1.5, time, Math.min(0.6, 0.2 + c.colour * 1.2))
     }
     this.curBand = bi % BANDS
+    // the bed's own position, which is what the band change actually moves
+    if (time !== undefined) this.say(time, { k: 'band', band: this.curBand, pan: this.bandPan(bi) })
   }
 
   // dust on the needle, never a sustained hiss
@@ -155,8 +199,11 @@ export class Engine {
     at.sort((a, b) => a - b)
     for (const off of at) {
       const t = time + off
-      this.cracklePan.pan.setValueAtTime((Math.random() * 2 - 1) * this.width, t)
-      this.crackle.triggerAttackRelease(0.01, t, 0.22 + Math.random() * 0.5)
+      const pan = (Math.random() * 2 - 1) * this.width
+      const vel = 0.22 + Math.random() * 0.5
+      this.cracklePan.pan.setValueAtTime(pan, t)
+      this.crackle.triggerAttackRelease(0.01, t, vel)
+      this.say(t, { k: 'dust', pan, vel })
     }
   }
 
@@ -204,6 +251,13 @@ export class Engine {
       const z = this.zoneFor((m.pan ?? 0) * this.width + this.centre)
       z.bell.triggerAttackRelease(f, M.noteLen, time, m.vel * soft)
       z.hammer.triggerAttackRelease(0.05, time, m.vel * 0.6 * soft)
+      this.say(time, {
+        k: 'note', band: bi, semi, freq: f, vel: m.vel * soft, len: M.noteLen,
+        // where in the frame it was found, and where it is actually being
+        // played from — the second is the first, narrowed by what the frame
+        // decided, and the picture wants both
+        found: m.pan ?? 0, at: z.base,
+      })
     }
     this.step++
   }
@@ -249,6 +303,9 @@ export class Engine {
   async start() {
     await Tone.start()
     this.build()
+    clearTimeout(this.fadeT)
+    this.out.gain.cancelScheduledValues(Tone.now())
+    this.out.gain.rampTo(1, IN)
     this.apply(this.A, this.M)
     this.step = 0
     Tone.Transport.position = 0
@@ -256,12 +313,25 @@ export class Engine {
     this.playing = true
   }
 
+  // Pause is a fade, not a switch: the piece never cuts, and cutting the bed at
+  // full amplitude would click. The Transport is left running until the fade has
+  // finished so nothing is chopped off on the way out.
   stop() {
-    Tone.Transport.stop()
-    this.pad?.releaseAll()
-    for (const z of this.zones) z.bell.releaseAll()
     this.playing = false
+    if (!this.built) return
+    clearTimeout(this.fadeT)
+    this.out.gain.cancelScheduledValues(Tone.now())
+    this.out.gain.rampTo(0, OUT)
+    this.pad.releaseAll()
+    for (const z of this.zones) z.bell.releaseAll()
+    this.fadeT = setTimeout(() => {
+      if (!this.playing) Tone.Transport.stop()
+    }, OUT * 1000 + 80)
   }
 
   get progress() { return Tone.Transport.progress }
+
+  // the master gain, mid-fade included: pause is a ramp, so anything drawn
+  // from this comes to rest at the same speed the sound does
+  get level() { return this.built ? this.out.gain.value : 0 }
 }

@@ -4,3 +4,11 @@ dist/
 
 # Film stills are copyrighted. Keep them local, never commit them.
 frames/
+
+# API keys stay out of the repo.
+.env
+.env.*
+!.env.example
+
+# Machine-local Claude Code permissions.
+.claude/settings.local.json

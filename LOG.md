@@ -310,3 +310,100 @@ flattens the stereo image to nothing. With it muted Fargo sweeps normally.
 Clamping it to a real bass range would fix both. Her call: it changes what every
 bright frame sounds like.
 
+
+## 2026-09-08 — the optical track
+
+Two regressions from the React migration, and then the animation rebuilt around
+what actually broke.
+
+### The loop ended on pause
+
+`sweep()` returned without re-scheduling itself once `core.playing` went false.
+The playhead parked wherever the last animation frame caught it and the marks
+froze mid-decay — while the engine's own `OUT` fade was still sounding for
+0.9 s. The loop runs unconditionally now.
+
+Also: the marks canvas only checked its width before resizing. Harmless while
+`Frame` was the sized grid child; once the reel started sizing the gate it could
+change height alone and leave the marks on a stale pixel grid.
+
+### Killed: the picture working out what is sounding for itself
+
+`Frame.jsx` derived the step from `Tone.Transport.progress` and kept its own copy
+of the motif rules, down to band two dropping its tail. That is two copies of one
+truth: a late tick or a slow grade pass desynchronises them permanently, and then
+the marks are showing a performance nobody is hearing — silently, because both
+halves look right in isolation.
+
+`Engine.say(time, event)` schedules through `Tone.Draw`, so a note event lands on
+the animation frame nearest the audio time it was scheduled for. `core.tap(fn)`
+is the subscription. The picture now only draws what the engine says it played.
+
+### The optical track
+
+Her direction, of three proposed: variable-area sound printed the way it is
+printed on a release print — perforations, sound track, picture, in that order
+across the strip, so it sits **outboard** of the frame and never over it. She is
+grading a shot; nothing is allowed to cover the shot.
+
+- The envelope is the bed, computed from the same 23/27/32/37 s cycles the
+  oscillator gains ride (`breathAt`). Recomputed, not sampled: an AudioParam
+  driven by a connected LFO does not report the LFO in `.value`.
+- A struck note swells the envelope with a ripple in it, and the ripple's
+  spatial frequency is the pitch. An audible frequency at four seconds of film
+  in the gate aliases to a smear, so it is mapped down to a rate the eye can
+  resolve — two octaves apart still look two octaves apart.
+- **The axis moves.** A band change repans the bed, so the track's centre line
+  walks across over the same 1.6 s the chords take to crossfade. The progression
+  is legible as a shape rather than as an event.
+- Dust is specks of 11 ms, which is 11 ms of film. Never a texture laid over the
+  strip — there is no continuous noise in the sound and there is none in the
+  picture of it.
+- **The strip's speed is the master gain, not the playing flag.** A flag kept the
+  print running flat out through the 0.9 s pause fade and then stopped it dead —
+  a cut. Following the gain, it spins up with the fade in, coasts to a stop with
+  the fade out, and comes to rest holding the last notes faintly printed.
+
+Perforations are placed on absolute print distance rather than on the loop, so
+they carry the speed and never tick in time with anything.
+
+### Not verified in the browser
+
+Builds clean and the plumbing is exercised, but nothing here has been *seen*
+running. Claude has no browser in this session. The look is hers to accept.
+
+## 2026-09-08 — the optical track, killed; and the overlay was twice the size of the shot
+
+The optical track is out — her call, one look was enough. `Optical.jsx` deleted
+and the reel is back to the markup it had before it: no flex row, no track
+gutter, the box is the picture again. The event plumbing stays, because the marks
+over the picture use it and it is what stopped them inventing a performance.
+
+### The marks were laid out at 2× and spilling onto the field
+
+Visible as band edges and pitch rules running past the right edge of the shot and
+on down through the printer points.
+
+`<canvas className="absolute inset-0">` with no width or height. That stretches a
+div; a canvas is a **replaced** element, and for replaced elements `width: auto`
+resolves to the *intrinsic* width — the backing store — and the over-constrained
+`right` is ignored outright. The overlay's CSS size was therefore
+`cv.width × cv.height`, which is set to w·dpr × h·dpr. On a 2× display the
+overlay was laid out at twice the size of the picture.
+
+The signature, from her screenshot: band 0's two edges landed at 0 and w/2
+instead of 0 and w/4. Exactly 2×, and it confirmed the mechanism before a line
+was changed.
+
+Latent, not new. While the first pass ran with the wrapper at zero size the
+backing store stayed 0, so the overlay was invisible rather than wrong — which is
+why fixing the loop and the resize check is what made it appear. Two bugs hiding
+each other.
+
+`place()` now sets left/top/width/height in CSS pixels from the **picture
+canvas** rather than the wrapper, so the marks are anchored to the shot whatever
+the box around it does, and the playhead's 8px overhang is explicit instead of
+being inferred from `-top-2 -bottom-2`.
+
+Rule for anything drawn over the frame from here: a canvas overlay needs an
+explicit CSS size. `inset-0` is not a size for a replaced element.
