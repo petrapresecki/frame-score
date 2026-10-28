@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFrameScore } from './useFrameScore.js'
 import { useBand } from './useBand.js'
-import { chordName, keyName, tempoWord, shortName } from './names.js'
+import { accentFrom } from './accent.js'
+import { keyName, tempoWord, shortName } from './names.js'
 import { shot, shotsFor } from './tmdb.js'
 import { triage } from './triage.js'
 import { PICKS } from './picks.js'
@@ -10,19 +11,17 @@ import { PrinterPoints } from './components/PrinterPoints.jsx'
 import { Sources } from './components/Sources.jsx'
 import { Search } from './components/Search.jsx'
 import { Picks } from './components/Picks.jsx'
-import { Reading } from './components/Reading.jsx'
-import { Ticker } from './components/Ticker.jsx'
+import { Contours } from './components/Contours.jsx'
+import { Bars } from './components/Bars.jsx'
 
 export default function App() {
   const { canvasRef, core, reading, playing, toggle } = useFrameScore()
-  const band = useBand(core, playing)
+  const [band, beat] = useBand(core, playing)
   const [shots, setShots] = useState([])
   const [index, setIndex] = useState(0)   // what the reel is showing
   const [film, setFilm] = useState(null)
   const [open, setOpen] = useState(false)
   const [busy, setBusy] = useState(false)
-  const [heard, setHeard] = useState({})  // how each pick played, once it has been
-  const [still, setStill] = useState(null) // the source, small, for the wallpaper and the silhouettes
   const fileRef = useRef(null)
   const panelRef = useRef(null)
 
@@ -95,26 +94,6 @@ export default function App() {
   const sourceName = reading?.sourceName
   const M = reading?.M
 
-  // The wallpaper is the shot itself, ungraded, tiled small behind everything —
-  // taken from the source canvas once per source, never per grade.
-  useEffect(() => {
-    if (!core?.src) return
-    const c = document.createElement('canvas')
-    c.width = 300; c.height = 169
-    c.getContext('2d').drawImage(core.src, 0, 0, 300, 169)
-    const url = c.toDataURL('image/jpeg', 0.7)
-    document.body.classList.add('wallpaper')
-    document.body.style.setProperty('--still', `url(${url})`)
-    setStill(url)
-  }, [core, sourceName])
-
-  // a pick remembers how it played, so its heart can say so afterwards
-  useEffect(() => {
-    if (!film?.stills || !M || sourceName !== film.title) return
-    setHeard(h => ({ ...h, [film.title]: { key: keyName(M), tempo: tempoWord(M.activity) } }))
-  }, [film, M, sourceName])
-
-  const chords = useMemo(() => M ? M.prog.map(c => chordName(c.deg)) : [], [M])
   // Everything that names the frame names what is at the gate. A film whose
   // reel is open but not yet picked from is not playing — the frame before it is.
   const shown = film && sourceName?.startsWith(film.title) ? film : null
@@ -123,50 +102,43 @@ export default function App() {
 
   useEffect(() => { document.title = name ? `${name.toLowerCase()} · frame score` : 'frame score' }, [name])
 
-  const ticker = !M ? 'frame score'
-    : playing && band !== null
-      ? `now playing ${name} ♡ bar ${band + 1} of 4 · ${chords[band]} ♡ ${tempoWord(M.activity)} ♡ notes of ${M.noteLen.toFixed(2)} s ♡ ${keyName(M)}`
-      : `press play ♡ ${name} is in ${keyName(M)} ♡ grade it, hear it ♡ made by frame score`
-
   const credit = shown ? `still: ${shown.by ?? 'tmdb'}${shown.year ? `, ${shown.year}` : ''}`
-    : own ? 'still: yours' : 'drawn in code'
+    : own ? 'still: yours' : 'a plate, drawn in code'
 
   return (
-    <main className="mx-auto max-w-[1600px] px-[28px] pb-[52px] pt-[18px] max-[900px]:px-[12px] max-[900px]:pt-[12px]">
-      <svg width="0" height="0" className="absolute" aria-hidden>
-        <defs>
-          <clipPath id="heart" clipPathUnits="objectBoundingBox">
-            <path d="M.5 .2C.4 0 .05 0 .02 .3C0 .55 .3 .78 .5 1C.7 .78 1 .55 .98 .3C.95 0 .6 0 .5 .2z" />
-          </clipPath>
-          <symbol id="star" viewBox="0 0 20 20">
-            <path d="M10 0l1.6 8.4L20 10l-8.4 1.6L10 20l-1.6-8.4L0 10l8.4-1.6z" fill="#fff" stroke="#111" strokeWidth=".6" />
-          </symbol>
-        </defs>
-      </svg>
-
-      <header className="flex items-stretch gap-[18px] max-[900px]:flex-col max-[900px]:gap-[10px]">
-        <div className="glow-bar flex flex-1 items-center rounded-[8px] px-[18px] pb-[10px] pt-[8px]">
-          <h1 className="glow-text m-0 font-pixel text-[clamp(24px,2.7vw,40px)] font-bold leading-[1.05] tracking-[.02em]">
-            these are the 4 chords of {name.toLowerCase()}.
-          </h1>
-        </div>
-        <div className="flex w-[352px] flex-col justify-center gap-[6px] max-[900px]:w-auto">
-          <Search onFilm={onFilm} busy={busy} />
-          <Sources core={core} srcIndex={reading?.srcIndex ?? 0} own={own} onPick={clearReel} fileRef={fileRef} />
-        </div>
+    <main
+      style={{ '--tone': accentFrom(reading?.A) }}
+      className="mx-auto max-w-[1440px] px-[45px] pb-[40px] pt-[18px] max-[900px]:px-[16px] max-[900px]:pt-[12px]"
+    >
+      <header className="flex h-[40px] items-center justify-between gap-[20px]">
+        {/* the name, with one bar per band; the one being heard is filled */}
+        <h1 className="m-0 flex items-center gap-[10px] text-[15px] font-normal">
+          <span aria-hidden className="flex h-[16px] gap-[2px]">
+            {[0, 1, 2, 3].map(i => (
+              <i key={i} className={`block w-[4px] border transition-colors duration-300
+                                     ${band === i ? 'border-[var(--tone)] bg-[var(--tone)]' : 'border-ink'}`} />
+            ))}
+          </span>
+          frame score
+        </h1>
+        <nav className="flex items-center gap-[64px] max-[900px]:gap-[16px]">
+          <div className="w-[240px] max-[900px]:w-[130px]"><Search onFilm={onFilm} busy={busy} /></div>
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="cursor-pointer border-0 bg-transparent p-0 font-mono text-[12.5px] font-light text-mid hover:text-ink max-[900px]:hidden"
+          >
+            your own frame
+          </button>
+        </nav>
       </header>
 
       <div
         ref={panelRef}
-        className="glass relative mt-[20px] scroll-mt-[12px] grid grid-cols-[var(--gate)_minmax(0,1fr)] gap-[34px] rounded-[26px] p-[22px]
-                   max-[900px]:grid-cols-1 max-[900px]:gap-[20px] max-[900px]:rounded-[18px] max-[900px]:p-[12px]"
-        style={{ '--gate': 'min(68%, clamp(480px, calc((100svh - 490px) * 16 / 9), 1120px))' }}
+        className="mt-[26px] grid scroll-mt-[12px] grid-cols-[minmax(0,800px)_minmax(0,1fr)] gap-[44px]
+                   max-[900px]:grid-cols-1 max-[900px]:gap-[26px]"
       >
-        {['-left-[11px] -top-[11px]', '-right-[11px] -top-[11px]', '-left-[11px] -bottom-[11px]', '-right-[11px] -bottom-[11px]'].map(p => (
-          <svg key={p} aria-hidden className={`absolute h-[22px] w-[22px] ${p}`}><use href="#star" /></svg>
-        ))}
-
-        <section aria-label="the frame and its grade" className="min-w-0">
+        <section aria-label="the frame" className="min-w-0">
           <Reel
             core={core}
             canvasRef={canvasRef}
@@ -178,32 +150,31 @@ export default function App() {
             onIndex={setIndex}
             onPick={onPick}
             onToggle={toggle}
-            chords={chords}
             band={band}
           >
-            {M && (
-              <span className="text-[16px]">
-                this frame is <s className="decoration-glow decoration-2">a picture</s> a song in{' '}
-                <em className="font-serif text-[19px]">{keyName(M)}</em>
-              </span>
-            )}
-            <span className="ml-auto -rotate-3 font-serif text-[13px] italic text-ink-soft max-[900px]:ml-0">{credit}</span>
+            {M && <span className="flex-1">{keyName(M)} · {tempoWord(M.activity)} · {M.motif.length} notes</span>}
+            <span className="text-mid max-[900px]:basis-full">{credit}</span>
           </Reel>
-
-          <PrinterPoints core={core} grade={reading?.grade ?? {}} onGesture={() => {}} />
         </section>
 
-        <Reading
-          reading={reading}
-          band={band}
-          still={still}
-          title={shown ? <>{shown.title}{shown.by ? <> <i>by</i> {shown.by}</> : shown.year ? `, ${shown.year}` : ''}</> : name}
-        />
+        <section aria-label="what the frame reads as" className="min-w-0">
+          <Contours core={core} canvasRef={canvasRef} reading={reading} />
+          <PrinterPoints core={core} grade={reading?.grade ?? {}} onGesture={() => {}} />
+          <Picks film={shown} onFilm={onFilm}>
+            <Sources core={core} srcIndex={reading?.srcIndex ?? 0} onPick={clearReel} fileRef={fileRef} />
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className={`cursor-pointer border-0 bg-transparent p-0 font-mono text-[12.5px] font-light hover:text-ink
+                          ${own ? 'text-ink underline decoration-[var(--tone)] underline-offset-4' : 'text-mid'}`}
+            >
+              your own frame
+            </button>
+          </Picks>
+        </section>
       </div>
 
-      <Picks film={shown} heard={heard} onFilm={onFilm} onOwn={() => fileRef.current?.click()} />
-
-      <Ticker text={ticker} />
+      <Bars reading={reading} band={band} beat={beat} />
     </main>
   )
 }

@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 // not an effect.
 const BANDS = 4
 
-export function Frame({ core, canvasRef, playing, chords = [], band = null }) {
+export function Frame({ core, canvasRef, playing, band = null }) {
   const wrapRef = useRef(null)
   const marksRef = useRef(null)
   const headRef = useRef(null)
@@ -187,23 +187,16 @@ export function Frame({ core, canvasRef, playing, chords = [], band = null }) {
                     ${playing ? 'opacity-100' : 'opacity-0'}`}
       />
 
-      {/* each band's chord, written on the band it was read from, as the
-          crush site writes a name on each heart. The sounding one is lit. */}
+      {/* the band being heard, underlined in the tone at the foot of the shot */}
       <div aria-hidden className="pointer-events-none absolute inset-0 grid grid-cols-4">
-        {chords.map((c, i) => (
-          <span key={i} className="px-[10px] py-[8px] font-mono text-[18px] font-bold leading-none text-white
-                                   [text-shadow:0_0_4px_#000] max-[900px]:px-[6px] max-[900px]:py-[6px] max-[900px]:text-[14px]">
-            <b className={`inline-block rounded-[3px] font-bold transition-[background,color,box-shadow] duration-300
-                           ${band === i ? 'bg-white px-[5px] text-glow shadow-[0_0_10px_var(--color-glow-soft)] [text-shadow:none]' : ''}`}>
-              {c}
-            </b>
-          </span>
+        {[0, 1, 2, 3].map(i => (
+          <span key={i} className={`transition-shadow duration-500 ${band === i ? 'shadow-[inset_0_-2px_0_var(--tone)]' : ''}`} />
         ))}
       </div>
 
       {over && (
-        <div className="absolute inset-0 grid place-items-center bg-blush/85 outline-2 -outline-offset-8 outline-dashed outline-glow">
-          <span className="font-pixel text-[22px] font-bold glow-text">drop it here</span>
+        <div className="absolute inset-0 grid place-items-center bg-field/85 outline-1 -outline-offset-8 outline-dashed outline-ink">
+          <span className="text-[14px]">drop it here</span>
         </div>
       )}
     </div>

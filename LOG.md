@@ -449,3 +449,32 @@ around this piece's own content. The instrument is untouched — no file below
   into band hues.
 
 Ribes and Sligoil are left in `public/fonts` but no longer loaded.
+
+
+## 2026-10-29 — direction B, the light table on the blue
+
+Direction K (the fan site) was loved and dropped: it did not sound like the
+music. It is kept in creative-kit as the Rhinestone theme, and in this repo's
+history (`e416aca`, `5ec5ea2`).
+
+Her references this time: ommolette.site, byotone.com and, above all,
+amitlankri.com. A first specimen followed Amit's page too closely (black name
+tag, bracketed capitals, dashed rules, square markers, a black row with a
+ticker); she asked for it to be less of a copy, and every one of those marks
+was replaced with one from this piece. Then she asked to keep the blue.
+
+- **The contour drawing.** The graded frame, blurred and traced with marching
+  squares at its own 25th, 55th and 82nd percentile of light — percentiles,
+  not fixed levels, because fixed levels drew a night plate as one line. A
+  grade redraws it.
+- **The notes on it.** One head per motif note, at the column it was taken
+  from and that column's brightest point. It fills with the tone and rings when
+  `core.tap` says the note was struck.
+- **The bars.** A plain table; the sounding row comes forward and a 2px line
+  fills across it over its four seconds, restarted by a band-change count from
+  `useBand` rather than by the clock.
+- **The four-bar glyph** by the name fills the band being heard.
+- **The tone** is `accent.js` again — the frame's hue held 62° clear of the
+  field, and greyed when the frame has no colour.
+- One face: IBM Plex Mono at 300/400/500. Secondary text is white at 72% for
+  4.6:1 on the field; at 55% it failed.

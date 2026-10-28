@@ -1,28 +1,25 @@
-// Your own frame and the three plates, as the boxed toggles badbunnybebefan
-// uses for English / Español. The one in use is filled.
-// The file input lives here; the empty heart in my picks opens it too.
-export function Sources({ core, srcIndex, own, onPick, fileRef }) {
-
-  const tab = on => `cursor-pointer border-[1.5px] px-[7px] font-mono text-[13.5px] leading-[1.45] transition-colors duration-200
-                     hover:text-glow ${on ? 'border-ink bg-white text-ink' : 'border-[#888] bg-white/60 text-ink-soft'}`
-
+// The three plates drawn in code, at the end of the picks line, and the file
+// input that "your own frame" opens.
+export function Sources({ core, srcIndex, onPick, fileRef }) {
   return (
-    <div className="flex flex-wrap gap-[7px]">
-      <button type="button" aria-pressed={own} onClick={() => fileRef.current.click()} className={tab(own)}>
-        your own frame
-      </button>
-      {core?.plates.map((pl, i) => (
-        <button
-          key={pl.name}
-          type="button"
-          title={pl.name}
-          aria-pressed={i === srcIndex}
-          onClick={() => { core.usePlate(i); onPick() }}
-          className={tab(i === srcIndex)}
-        >
-          plate {i + 1}
-        </button>
-      ))}
+    <>
+      <span className="mr-[10px] whitespace-nowrap text-mid">
+        plates
+        {core?.plates.map((pl, i) => (
+          <button
+            key={pl.name}
+            type="button"
+            title={pl.name}
+            aria-label={pl.name}
+            aria-current={i === srcIndex}
+            onClick={() => { core.usePlate(i); onPick() }}
+            className={`ml-[10px] cursor-pointer border-0 bg-transparent p-0 font-mono text-[12.5px] font-light hover:text-ink
+                        ${i === srcIndex ? 'text-ink underline decoration-[var(--tone)] underline-offset-4' : 'text-mid'}`}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </span>
       <input
         ref={fileRef}
         type="file"
@@ -32,6 +29,6 @@ export function Sources({ core, srcIndex, own, onPick, fileRef }) {
         onChange={e => { core?.loadFile(e.target.files[0]); onPick() }}
         className="absolute h-px w-px opacity-0"
       />
-    </div>
+    </>
   )
 }

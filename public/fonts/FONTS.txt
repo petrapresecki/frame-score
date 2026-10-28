@@ -1,8 +1,5 @@
-All four faces are SIL Open Font License 1.1, Latin subsets from Google Fonts.
+IBM Plex Mono (Mike Abbink, Bold Monday for IBM), SIL Open Font License 1.1.
+Latin subset from Google Fonts, weights 300, 400 and 500. The only face on the page.
 
-Courier Prime      Alan Dague-Greene (Quote-Unquote Apps)   body, labels, cards
-Pixelify Sans      Stefie Justprince                        the glowing title bar, headings
-Instrument Serif   Rodrigo Fuenzalida, Jordan Egstad         numbers, names, the front card
-Pinyon Script      Nicole Fally (Sorkin Type)               "play"
-
-Ribes and Sligoil belong to the previous skin (direction A2) and are no longer loaded.
+Ribes and Sligoil belong to the earlier A2 skin and are not loaded.
+The fan-site skin (direction K) and its four faces now live in creative-kit as the Rhinestone theme.

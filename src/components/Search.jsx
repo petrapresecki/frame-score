@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { searchFilms } from '../tmdb.js'
 
-// A film title, and the reel it loads. A plain boxed field, as on
-// thinkinboutyou: no icon, no button — Enter takes the first match.
+// A film title, and the reel it loads. A line you type on — no box, no icon,
+// no button. Enter takes the first match.
 export function Search({ onFilm, busy }) {
   const [q, setQ] = useState('')
   const [list, setList] = useState([])
@@ -45,23 +45,22 @@ export function Search({ onFilm, busy }) {
         placeholder="search a film"
         aria-label="search a film"
         spellCheck={false}
-        className="w-full border-[1.5px] border-ink bg-white/80 px-[10px] py-[7px]
-                   font-mono text-[14px] text-ink outline-none
-                   placeholder:text-ink-soft
-                   focus:bg-white focus:shadow-[inset_0_0_0_3px_#f3d7ff]"
+        className="w-full border-0 border-b border-rule bg-transparent pb-[4px]
+                   font-mono text-[12.5px] font-light text-ink outline-none
+                   placeholder:text-mid focus:border-ink"
       />
 
       {/* only says something when there is something to say */}
       {(err || busy) && (
-        <p role="status" className="m-0 mt-[5px] font-mono text-[12.5px] italic text-ink-soft">
+        <p role="status" className="absolute left-0 top-[26px] m-0 whitespace-nowrap text-mid">
           {err ?? 'reading the reel…'}
         </p>
       )}
 
       {open && list.length > 0 && (
         <ul
-          className="absolute left-0 right-0 top-[38px] z-50 m-0 list-none border-[1.5px] border-ink
-                     bg-white p-[4px] text-[14px] shadow-[0_10px_30px_rgba(60,0,40,.25)]"
+          className="absolute left-0 right-0 top-[28px] z-50 m-0 list-none border border-rule
+                     bg-field p-[4px] shadow-[0_10px_30px_rgba(0,0,40,.35)]"
         >
           {list.map(f => (
             <li key={f.id}>
@@ -71,11 +70,11 @@ export function Search({ onFilm, busy }) {
                 // list before a click ever landed
                 onMouseDown={e => { e.preventDefault(); pick(f) }}
                 className="block w-full cursor-pointer truncate border-0 bg-transparent px-[6px] py-[4px]
-                           text-left font-mono text-[14px] text-ink outline-none
-                           hover:bg-blush hover:text-glow"
+                           text-left font-mono text-[12.5px] font-light text-mid outline-none
+                           hover:text-ink focus-visible:text-ink"
               >
                 {f.title}
-                {f.year && <i className="text-ink-soft"> · {f.year}</i>}
+                {f.year && <i className="not-italic"> · {f.year}</i>}
               </button>
             </li>
           ))}

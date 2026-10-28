@@ -99,16 +99,17 @@ The split is the point: nothing below `core.js` knows React exists.
 | `src/plates.js`               | placeholder frames drawn in code                                                                |
 | `src/core.js`                 | the instrument: canvas, grade state, analysis and engine, behind a listener                     |
 | `src/useFrameScore.js`        | the one hook that holds `Core` in a ref and hands React the last reading                        |
-| `src/App.jsx`                 | direction K, a fan site for one shot: glowing title, glass panel, frame and grade left, reading right, picks below |
+| `src/App.jsx`                 | direction B, the light table on the blue: the frame left, its contour drawing and the grade right, the bars beneath |
 | `src/names.js`                | words for decisions: chord names from voicings, the key, a tempo word for activity — names only, never decides |
-| `src/useBand.js`              | which band the engine says it is playing, from `core.tap`                                       |
-| `src/components/Reading.jsx`  | the readout as six silhouettes (key, bulb, metronome, notes, speaker, drop) that fill with the shot, and a HEARD list — every value the tape printed |
-| `src/components/Frame.jsx`    | the frame as transport, and the marks drawn over it                                             |
-| `src/components/PrinterPoints.jsx` | the four grade controls as scrubbed numerals in boxed counters                             |
-| `src/components/Sources.jsx`  | your own file and the three plates, as boxed toggles                                            |
-| `src/components/Picks.jsx`    | my picks as labelled hearts; a pick says its key only once it has been heard                    |
-| `src/components/Ticker.jsx`   | the strip along the bottom, saying what is playing                                              |
-| `src/skin.css`                | the Tailwind theme: pink light, one glowing red, four OFL faces (see `public/fonts/FONTS.txt`)  |
+| `src/useBand.js`              | which band the engine says it is playing, and a count of band changes, from `core.tap`          |
+| `src/accent.js`               | the tone: the frame's hue, forced clear of the blue ground. Used only for what is sounding      |
+| `src/components/Frame.jsx`    | the frame as transport, the marks drawn over it, and the sounding band underlined               |
+| `src/components/Reel.jsx`     | the gate, the reel of candidate shots, and the transport row                                    |
+| `src/components/Contours.jsx` | the frame's light as contour lines, with the melody's notes as heads that ring when struck      |
+| `src/components/PrinterPoints.jsx` | the four grade controls as scrubbed numerals, in a table                                   |
+| `src/components/Bars.jsx`     | the four bars as a table; the sounding row fills over its four seconds                          |
+| `src/components/Picks.jsx`    | my picks as one line of titles; `Sources.jsx` adds the plates and the file input to it          |
+| `src/skin.css`                | the Tailwind theme: the blue field, white ink, IBM Plex Mono. The tone is a live custom property, never a token |
 | `LOG.md`                      | the build log — what was tried and killed, and why                                              |
 
 The picture never works out what is sounding for itself. `Engine.say` schedules

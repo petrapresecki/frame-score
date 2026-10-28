@@ -63,39 +63,32 @@ function Point({ p, value, core, onGesture }) {
   }
 
   return (
-    <button
-      type="button"
-      role="slider"
-      aria-label={`${p.label}, printer points`}
-      aria-valuemin={0}
-      aria-valuemax={POINTS}
-      aria-valuenow={pts}
-      aria-valuetext={`${pts} points, ${reading}`}
-      onPointerDown={down}
-      onPointerMove={move}
-      onPointerUp={() => { drag.current = null }}
-      onPointerCancel={() => { drag.current = null }}
-      onKeyDown={keydown}
-      // it is a <button>, so a bare click would otherwise do nothing at all
-      onClick={e => e.preventDefault()}
-      className={`group block touch-none cursor-ew-resize border-[1.5px] border-ink px-[9px] pb-[7px] pt-[5px]
-                  text-left font-[inherit] text-inherit outline-none transition-shadow duration-300
-                  focus-visible:shadow-[0_0_0_3px_#fff,0_0_0_5px_var(--color-glow)]
-                  ${pts === DATUM ? 'bg-white/80' : 'bg-white shadow-[0_0_0_3px_#fff,0_0_14px_var(--color-glow-soft)]'}`}
-    >
-      {/* a counter in a box, as thinkinboutyou counts its crushes; it glows
-          once it has been moved off the datum */}
-      <span
-        className={`block font-serif text-[40px] leading-none tabular-nums max-[900px]:text-[34px]
-                    ${pts === DATUM ? 'text-ink' : 'text-glow [text-shadow:0_0_6px_var(--color-glow-soft)]'}`}
-      >
-        {String(pts).padStart(2, '0')}
-      </span>
-      <span className="mt-[2px] flex flex-col text-[12.5px] leading-tight">
-        <span>{p.label.toLowerCase()}</span>
-        <span className="tabular-nums text-ink-soft">{reading}</span>
-      </span>
-    </button>
+    <tr className="h-[46px] border-b border-rule">
+      <td>{p.label.toLowerCase()}</td>
+      <td className="w-[64px]">
+        <button
+          type="button"
+          role="slider"
+          aria-label={`${p.label}, printer points`}
+          aria-valuemin={0}
+          aria-valuemax={POINTS}
+          aria-valuenow={pts}
+          aria-valuetext={`${pts} points, ${reading}`}
+          onPointerDown={down}
+          onPointerMove={move}
+          onPointerUp={() => { drag.current = null }}
+          onPointerCancel={() => { drag.current = null }}
+          onKeyDown={keydown}
+          // it is a <button>, so a bare click would otherwise do nothing at all
+          onClick={e => e.preventDefault()}
+          className={`-ml-[3px] cursor-ew-resize touch-none border-0 border-b bg-transparent px-[3px] font-mono text-[16px]
+                      font-normal tabular-nums ${pts === DATUM ? 'border-transparent text-ink' : 'border-[var(--tone)] text-[var(--tone)]'}`}
+        >
+          {String(pts).padStart(2, '0')}
+        </button>
+      </td>
+      <td className="text-right tabular-nums">{reading}</td>
+    </tr>
   )
 }
 
@@ -103,10 +96,20 @@ function Point({ p, value, core, onGesture }) {
 // focus it and use the arrow keys (shift for five, backspace for the datum).
 export function PrinterPoints({ core, grade, onGesture }) {
   return (
-    <div className="mt-[12px] grid grid-cols-4 gap-[10px] max-[900px]:grid-cols-2">
-      {core && PARAMS.map(p => (
-        <Point key={p.k} p={p} value={grade[p.k]} core={core} onGesture={onGesture} />
-      ))}
-    </div>
+    <table className="mt-[26px] w-full border-collapse">
+      <caption className="sr-only">the grade, in printer points; drag a number, or focus it and use the arrow keys</caption>
+      <thead>
+        <tr className="border-b border-rule text-mid">
+          <th className="pb-[8px] text-left font-light">grade</th>
+          <th className="pb-[8px] text-left font-light">points</th>
+          <th className="pb-[8px] text-right font-light">value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {core && PARAMS.map(p => (
+          <Point key={p.k} p={p} value={grade[p.k]} core={core} onGesture={onGesture} />
+        ))}
+      </tbody>
+    </table>
   )
 }

@@ -30,7 +30,7 @@ const OPEN = 0.12        // per-frame ease of the reel opening and closing
 export function Reel({
   core, canvasRef, playing, onToggle,
   shots, index, onIndex, onPick, open, onOpen,
-  chords, band, children,
+  band, children,
 }) {
   const boxRef = useRef(null)
   const gateRef = useRef(null)
@@ -208,15 +208,14 @@ export function Reel({
         }}
         aria-label={playing ? 'the frame, playing. space to pause' : 'the frame. space to play'}
         className={`relative aspect-video w-full select-none outline-none touch-none
-                    shadow-[0_0_0_1.5px_#fff,0_8px_22px_-10px_rgba(0,0,0,.5)]
-                    focus-visible:shadow-[0_0_0_1.5px_#fff,0_0_0_4px_var(--color-glow)]
+                    focus-visible:shadow-[0_0_0_1px_var(--color-field),0_0_0_2px_var(--color-ink)]
                     ${open ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'}`}
         style={{ perspective: `${Math.max(1, w) * 2.4}px` }}
       >
         {/* the gate: the graded canvas, the marks, the playhead. Only ever
             holds a shot that was picked. */}
         <div ref={gateRef} className="absolute inset-0">
-          <Frame core={core} canvasRef={canvasRef} playing={playing} chords={chords} band={band} />
+          <Frame core={core} canvasRef={canvasRef} playing={playing} band={band} />
         </div>
 
         {shots.map((s, i) => (
@@ -247,17 +246,22 @@ export function Reel({
         ))}
       </div>
 
-      {/* Kept outside the frame so the horizontal clip cannot reach it. The
-          transport is written by hand, the way the portfolio writes its name;
-          the line after it says what the frame is now. */}
-      <div className="relative mt-[10px] flex flex-wrap items-baseline gap-x-[18px] gap-y-[2px]">
+      {/* Kept outside the frame so the horizontal clip cannot reach it. */}
+      <div className="relative mt-[14px] flex flex-wrap items-center gap-x-[16px] gap-y-[6px]">
         <button
           type="button"
           onClick={onToggle}
           aria-pressed={playing}
-          className="cursor-pointer border-0 bg-transparent py-0 pl-[8px] pr-[2px] font-script text-[44px] leading-none text-ink
-                     transition-colors duration-[250ms] hover:text-glow"
+          className="group flex cursor-pointer items-center gap-[10px] border-0 bg-transparent p-0 font-mono text-[14px]
+                     font-normal text-ink"
         >
+          <span
+            aria-hidden
+            className="grid h-[30px] w-[30px] place-items-center rounded-full border border-ink text-[10px]
+                       transition-colors duration-200 group-hover:bg-ink group-hover:text-field"
+          >
+            {playing ? '❚❚' : '▶'}
+          </span>
           {playing ? 'pause' : 'play'}
         </button>
         {children}
@@ -265,16 +269,14 @@ export function Reel({
           <button
             type="button"
             onClick={() => onOpen(!open)}
-            className="ml-auto cursor-pointer border-[1.5px] border-ink bg-white/75 px-[8px] font-mono text-[13px]
-                       tabular-nums text-ink transition-colors duration-[250ms] hover:text-glow"
+            className="cursor-pointer border-0 bg-transparent p-0 font-mono text-[12.5px] font-light tabular-nums
+                       text-mid hover:text-ink"
           >
             {open ? 'close the reel' : 'the reel'} · {String(index + 1).padStart(2, '0')}/{String(shots.length).padStart(2, '0')}
           </button>
         )}
         {open && has && (
-          <p className="m-0 basis-full font-mono text-[12.5px] italic text-ink-soft">
-            drag to spin, click the one in the middle to grade it
-          </p>
+          <p className="m-0 basis-full text-mid">drag to spin, click the one in the middle to grade it</p>
         )}
       </div>
     </div>
