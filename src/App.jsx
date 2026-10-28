@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { useFrameScore } from './useFrameScore.js'
 import { accentFrom } from './accent.js'
-import { shotsFor } from './tmdb.js'
+import { shot, shotsFor } from './tmdb.js'
 import { triage } from './triage.js'
 import { Tape } from './components/Tape.jsx'
 import { Reel } from './components/Reel.jsx'
@@ -20,6 +20,21 @@ export default function App() {
   const dismissCue = () => setCueGone(true)
 
   const onFilm = useCallback(async f => {
+    // one of my picks: its stills were chosen by hand, so they keep their
+    // order, and a single still has nothing to choose between — it goes
+    // straight to the gate
+    if (f.stills) {
+      const s = f.stills.map(shot)
+      setFilm(f)
+      if (s.length === 1) {
+        setShots([]); setIndex(0); setOpen(false); dismissCue()
+        core?.loadURL(s[0].gate, f.title).catch(e => console.warn(e.message))
+      } else {
+        setShots(s); setIndex(0); setOpen(true)
+      }
+      return
+    }
+
     setBusy(true)
     setFilm(f)
     try {
@@ -32,7 +47,7 @@ export default function App() {
     } finally {
       setBusy(false)
     }
-  }, [])
+  }, [core])
 
   // The gate is reached here and nowhere else. Loading goes through the same
   // path a dropped file takes, so the printer points, the analysis and the
