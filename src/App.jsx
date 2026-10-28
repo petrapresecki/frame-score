@@ -12,6 +12,7 @@ import { Search } from './components/Search.jsx'
 import { Picks } from './components/Picks.jsx'
 import { Contours } from './components/Contours.jsx'
 import { Bars } from './components/Bars.jsx'
+import { About } from './components/About.jsx'
 
 export default function App() {
   const { canvasRef, core, reading, playing, toggle } = useFrameScore()
@@ -21,6 +22,8 @@ export default function App() {
   const [film, setFilm] = useState(null)
   const [open, setOpen] = useState(false)
   const [busy, setBusy] = useState(false)
+  const [about, setAbout] = useState(false)
+  const closeAbout = useCallback(() => setAbout(false), [])
   const fileRef = useRef(null)
   const panelRef = useRef(null)
 
@@ -120,8 +123,8 @@ export default function App() {
           </span>
           frame score
         </h1>
-        <nav className="flex items-center gap-[64px] max-[900px]:gap-[16px]">
-          <div className="w-[240px] max-[900px]:w-[110px]"><Search onFilm={onFilm} busy={busy} /></div>
+        <nav className="flex items-center gap-[48px] max-[900px]:gap-[14px]">
+          <div className="w-[240px] max-[900px]:w-[96px]"><Search onFilm={onFilm} busy={busy} /></div>
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
@@ -129,6 +132,14 @@ export default function App() {
                         ${own ? 'text-ink underline decoration-[var(--tone)] underline-offset-4' : 'text-mid'}`}
           >
             your own frame
+          </button>
+          <button
+            type="button"
+            aria-expanded={about}
+            onClick={() => setAbout(true)}
+            className="cursor-pointer whitespace-nowrap border-0 bg-transparent p-0 font-ui text-[13.5px] font-light text-mid hover:text-ink"
+          >
+            about
           </button>
           {/* the file input "your own frame" opens; a dropped file goes the same way */}
           <input
@@ -183,6 +194,7 @@ export default function App() {
       </div>
 
       <Bars reading={reading} band={band} beat={beat} />
+      <About open={about} onClose={closeAbout} />
     </main>
   )
 }

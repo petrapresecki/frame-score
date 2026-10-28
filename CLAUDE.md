@@ -109,6 +109,7 @@ The split is the point: nothing below `core.js` knows React exists.
 | `src/components/PrinterPoints.jsx` | the four grade controls as scrubbed numerals, in a table, with reset all and a ↺ per moved row |
 | `src/components/Bars.jsx`     | the four bars as a table; the sounding row fills over its four seconds                          |
 | `src/components/Picks.jsx`    | my picks as labelled stills under the frame                                                    |
+| `src/components/About.jsx`    | the concept, in a panel that slides in from the right and back; Escape or a click outside closes it |
 | `src/skin.css`                | the Tailwind theme: the blue field, white ink, Jura. The tone is a live custom property, never a token |
 | `LOG.md`                      | the build log — what was tried and killed, and why                                              |
 
