@@ -1,17 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { searchFilms } from '../tmdb.js'
-import { PICKS } from '../picks.js'
 
 // A film title, and the reel it loads. Set as a caption, not as a search
 // engine: one rule, no box, no button — the field is a line you type on.
-// Until something is typed, the list offers my picks instead.
 export function Search({ onFilm, busy, film }) {
   const [q, setQ] = useState('')
   const [list, setList] = useState([])
   const [open, setOpen] = useState(false)
   const [err, setErr] = useState(null)
   const seq = useRef(0)
-  const inputRef = useRef(null)
 
   useEffect(() => {
     if (!q.trim()) { setList([]); setErr(null); return }
@@ -34,19 +31,15 @@ export function Search({ onFilm, busy, film }) {
     onFilm(f)
   }
 
-  const picking = !q.trim()
-  const shown = picking ? PICKS : list
-
   return (
     <div className="relative">
       <input
-        ref={inputRef}
         value={q}
         onChange={e => { setQ(e.target.value); setOpen(true) }}
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 120)}
         onKeyDown={e => {
-          if (e.key === 'Enter' && !picking && list[0]) { e.preventDefault(); pick(list[0]) }
+          if (e.key === 'Enter' && list[0]) { e.preventDefault(); pick(list[0]) }
           if (e.key === 'Escape') { setQ(''); setOpen(false); e.currentTarget.blur() }
         }}
         placeholder="search a film"
@@ -64,29 +57,14 @@ export function Search({ onFilm, busy, film }) {
         <span className="overflow-hidden text-ellipsis whitespace-nowrap">
           {err ?? (busy ? 'reading…' : film ? `${film.title}${film.year ? ` · ${film.year}` : ''}` : 'or drop a frame')}
         </span>
-        <button
-          type="button"
-          // focusing the empty field is what opens the picks; mousedown is
-          // held back so a focused field doesn't blur and close them first
-          onMouseDown={e => e.preventDefault()}
-          onClick={() => { setQ(''); setOpen(true); inputRef.current.focus() }}
-          className="ml-auto shrink-0 cursor-pointer border-0 bg-transparent p-0 font-[inherit] text-[11.5px]
-                     text-ink-quarter outline-none transition-colors duration-[250ms]
-                     hover:text-[var(--accent)] focus-visible:text-[var(--accent)]"
-        >
-          my picks
-        </button>
       </p>
 
-      {open && shown.length > 0 && (
+      {open && list.length > 0 && (
         <ul
           className="absolute left-0 right-0 top-[30px] z-50 m-0 list-none rounded-[2px]
                      bg-field-deep p-[6px] text-[11.5px] shadow-[0_10px_30px_rgba(0,0,0,.35)]"
         >
-          {picking && (
-            <li aria-hidden className="px-[6px] pt-[2px] pb-[4px] text-ink-quarter">my picks</li>
-          )}
-          {shown.map(f => (
+          {list.map(f => (
             <li key={f.id}>
               <button
                 type="button"

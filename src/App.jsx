@@ -8,6 +8,7 @@ import { Reel } from './components/Reel.jsx'
 import { PrinterPoints } from './components/PrinterPoints.jsx'
 import { Sources } from './components/Sources.jsx'
 import { Search } from './components/Search.jsx'
+import { Picks } from './components/Picks.jsx'
 
 export default function App() {
   const { canvasRef, core, reading, playing, toggle } = useFrameScore()
@@ -69,12 +70,13 @@ export default function App() {
 
   return (
     // Asymmetric on purpose: the tape is a narrow fixed column, the frame sits
-    // right of centre, and the points run under it. Nothing is centred.
+    // right of centre, the points run under it, and my picks hang off the right
+    // edge. Nothing is centred.
     <main
       style={{ '--accent': accentFrom(reading?.A) }}
-      className="fixed inset-0 grid grid-cols-[232px_minmax(0,1fr)] grid-rows-[minmax(0,1fr)_auto]
+      className="fixed inset-0 grid grid-cols-[232px_minmax(0,1fr)_auto] grid-rows-[minmax(0,1fr)_auto]
                  gap-x-[clamp(24px,5vw,88px)] px-[34px] pt-[26px] pb-[22px]
-                 max-[900px]:grid-cols-1 max-[900px]:grid-rows-[auto_minmax(0,1fr)_auto]
+                 max-[900px]:grid-cols-1 max-[900px]:grid-rows-[auto_minmax(0,1fr)_auto_auto]
                  max-[900px]:px-5 max-[900px]:py-[18px]"
     >
       <div className="col-start-1 row-start-1 flex min-h-0 flex-col gap-[20px]">
@@ -99,6 +101,9 @@ export default function App() {
       />
 
       <PrinterPoints core={core} grade={reading?.grade ?? {}} onGesture={dismissCue} />
+
+      {/* my picks, down the right side */}
+      <Picks film={film} onFilm={onFilm} />
 
       <Sources core={core} srcIndex={reading?.srcIndex ?? 0} onPick={clearReel} />
     </main>
