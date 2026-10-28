@@ -81,7 +81,7 @@ function Point({ p, value, core, onGesture }) {
           onKeyDown={keydown}
           // it is a <button>, so a bare click would otherwise do nothing at all
           onClick={e => e.preventDefault()}
-          className={`-ml-[3px] cursor-ew-resize touch-none border-0 border-b bg-transparent px-[3px] font-mono text-[16px]
+          className={`-ml-[3px] cursor-ew-resize touch-none border-0 border-b bg-transparent px-[3px] font-ui text-[16px]
                       font-normal tabular-nums ${pts === DATUM ? 'border-transparent text-ink' : 'border-[var(--tone)] text-[var(--tone)]'}`}
         >
           {String(pts).padStart(2, '0')}
@@ -95,7 +95,7 @@ function Point({ p, value, core, onGesture }) {
             onClick={() => { onGesture(); commit(DATUM) }}
             aria-label={`reset ${p.label.toLowerCase()} to 25`}
             title="back to 25"
-            className="mr-[12px] cursor-pointer border-0 bg-transparent p-0 font-mono text-[13px] text-mid hover:text-ink"
+            className="mr-[12px] cursor-pointer border-0 bg-transparent p-0 font-ui text-[13px] text-mid hover:text-ink"
           >
             ↺
           </button>
@@ -122,7 +122,7 @@ export function PrinterPoints({ core, grade, onGesture }) {
               type="button"
               disabled={!moved}
               onClick={() => { onGesture(); core.reset() }}
-              className="mr-[16px] cursor-pointer border-0 bg-transparent p-0 font-mono text-[12.5px] font-light text-ink
+              className="mr-[16px] cursor-pointer border-0 bg-transparent p-0 font-ui text-[13.5px] font-light text-ink
                          underline decoration-rule underline-offset-4 hover:decoration-ink disabled:cursor-default
                          disabled:text-mid disabled:no-underline disabled:opacity-60"
             >

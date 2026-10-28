@@ -9,21 +9,20 @@
  * four seconds.
  *
  * Ground: the saturated blue field kept from direction A2 (#0a38ff), with
- * every line and letter in white. One face, IBM Plex Mono, light.
+ * every line and letter in white. One face, Jura (Daniel Johnson, OFL), light —
+ * thin and rounded, like the labels on a synthesiser; her pick of three.
  * The tone — whatever is sounding — is sampled from the frame and forced clear
  * of the ground hue (src/accent.js). It is a live custom property, never a token.
  */
 
-@font-face { font-family: 'IBM Plex Mono'; src: url('/fonts/IBMPlexMono-Light.woff2') format('woff2'); font-weight: 300; font-display: swap; }
-@font-face { font-family: 'IBM Plex Mono'; src: url('/fonts/IBMPlexMono-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
-@font-face { font-family: 'IBM Plex Mono'; src: url('/fonts/IBMPlexMono-Medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Jura'; src: url('/fonts/Jura-Variable.woff2') format('woff2'); font-weight: 300 600; font-display: swap; }
 
 @theme {
   --color-field: #0a38ff;
   --color-ink: #eef1ff;
   --color-mid: rgba(238, 241, 255, 0.72);     /* 4.6:1 on the field */
   --color-rule: rgba(238, 241, 255, 0.3);
-  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  --font-ui: 'Jura', 'Helvetica Neue', Arial, sans-serif;
 }
 
 @layer base {
@@ -31,7 +30,7 @@
   body {
     margin: 0;
     color: var(--color-ink);
-    font-family: var(--font-mono);
+    font-family: var(--font-ui);
     font-weight: 300;
     font-size: 12.5px;
     line-height: 1.45;

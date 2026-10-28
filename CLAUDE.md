@@ -108,8 +108,8 @@ The split is the point: nothing below `core.js` knows React exists.
 | `src/components/Contours.jsx` | the frame's light as contour lines, with the melody's notes as heads that ring when struck      |
 | `src/components/PrinterPoints.jsx` | the four grade controls as scrubbed numerals, in a table, with reset all and a ↺ per moved row |
 | `src/components/Bars.jsx`     | the four bars as a table; the sounding row fills over its four seconds                          |
-| `src/components/Picks.jsx`    | my picks as labelled stills under the frame; `Sources.jsx` is the plates and the file input     |
-| `src/skin.css`                | the Tailwind theme: the blue field, white ink, IBM Plex Mono. The tone is a live custom property, never a token |
+| `src/components/Picks.jsx`    | my picks as labelled stills under the frame                                                    |
+| `src/skin.css`                | the Tailwind theme: the blue field, white ink, Jura. The tone is a live custom property, never a token |
 | `LOG.md`                      | the build log — what was tried and killed, and why                                              |
 
 The picture never works out what is sounding for itself. `Engine.say` schedules

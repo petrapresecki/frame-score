@@ -8,7 +8,6 @@ import { triage } from './triage.js'
 import { PICKS } from './picks.js'
 import { Reel } from './components/Reel.jsx'
 import { PrinterPoints } from './components/PrinterPoints.jsx'
-import { Sources } from './components/Sources.jsx'
 import { Search } from './components/Search.jsx'
 import { Picks } from './components/Picks.jsx'
 import { Contours } from './components/Contours.jsx'
@@ -112,7 +111,7 @@ export default function App() {
     >
       <header className="flex h-[40px] items-center justify-between gap-[20px]">
         {/* the name, with one bar per band; the one being heard is filled */}
-        <h1 className="m-0 flex items-center gap-[10px] text-[15px] font-normal">
+        <h1 className="m-0 flex items-center gap-[10px] whitespace-nowrap text-[15px] font-normal">
           <span aria-hidden className="flex h-[16px] gap-[2px]">
             {[0, 1, 2, 3].map(i => (
               <i key={i} className={`block w-[4px] border transition-colors duration-300
@@ -122,14 +121,25 @@ export default function App() {
           frame score
         </h1>
         <nav className="flex items-center gap-[64px] max-[900px]:gap-[16px]">
-          <div className="w-[240px] max-[900px]:w-[130px]"><Search onFilm={onFilm} busy={busy} /></div>
+          <div className="w-[240px] max-[900px]:w-[110px]"><Search onFilm={onFilm} busy={busy} /></div>
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="cursor-pointer border-0 bg-transparent p-0 font-mono text-[12.5px] font-light text-mid hover:text-ink max-[900px]:hidden"
+            className={`cursor-pointer whitespace-nowrap border-0 bg-transparent p-0 font-ui text-[13.5px] font-light hover:text-ink max-[900px]:hidden
+                        ${own ? 'text-ink underline decoration-[var(--tone)] underline-offset-4' : 'text-mid'}`}
           >
             your own frame
           </button>
+          {/* the file input "your own frame" opens; a dropped file goes the same way */}
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            tabIndex={-1}
+            aria-hidden
+            onChange={e => { core?.loadFile(e.target.files[0]); clearReel() }}
+            className="absolute h-px w-px opacity-0"
+          />
         </nav>
       </header>
 
@@ -154,6 +164,14 @@ export default function App() {
           >
             {M && <span className="flex-1">{keyName(M)} · {tempoWord(M.activity)} · {M.motif.length} notes</span>}
             <span className="text-mid max-[900px]:basis-full">{credit}</span>
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="hidden cursor-pointer border-0 bg-transparent p-0 font-ui text-[13.5px] font-light text-mid underline
+                         decoration-rule underline-offset-4 hover:text-ink max-[900px]:inline"
+            >
+              or grade your own frame
+            </button>
           </Reel>
           <Picks film={shown} onFilm={onFilm} />
         </section>
@@ -161,18 +179,6 @@ export default function App() {
         <section aria-label="what the frame reads as" className="min-w-0">
           <Contours core={core} canvasRef={canvasRef} reading={reading} />
           <PrinterPoints core={core} grade={reading?.grade ?? {}} onGesture={() => {}} />
-          <p className="m-0 mt-[22px] leading-[1.9]">
-            <span className="mr-[10px] text-mid">or try</span>
-            <Sources core={core} srcIndex={reading?.srcIndex ?? 0} onPick={clearReel} fileRef={fileRef} />
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              className={`cursor-pointer border-0 bg-transparent p-0 font-mono text-[12.5px] font-light hover:text-ink
-                          ${own ? 'text-ink underline decoration-[var(--tone)] underline-offset-4' : 'text-mid'}`}
-            >
-              your own frame
-            </button>
-          </p>
         </section>
       </div>
 

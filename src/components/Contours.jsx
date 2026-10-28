@@ -117,7 +117,7 @@ export function Contours({ core, canvasRef, reading }) {
             style={{ left: `${h.x * 100}%`, top: `${h.y * 100}%`, transform: h.left ? 'translate(calc(-100% + 6px), -6px)' : 'translate(-6px, -6px)' }}
           >
             <i className="note-head" />
-            <span className={`bg-field px-[3px] text-[11.5px] ${h.low ? 'relative top-[14px]' : ''}`}>
+            <span className={`bg-field px-[3px] text-[12.5px] ${h.low ? 'relative top-[14px]' : ''}`}>
               {h.name}<sup className="ml-px text-[8px] text-mid">{h.k + 1}</sup>
             </span>
           </span>

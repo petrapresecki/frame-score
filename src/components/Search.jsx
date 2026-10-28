@@ -46,7 +46,7 @@ export function Search({ onFilm, busy }) {
         aria-label="search a film"
         spellCheck={false}
         className="w-full border-0 border-b border-rule bg-transparent pb-[4px]
-                   font-mono text-[12.5px] font-light text-ink outline-none
+                   font-ui text-[13.5px] font-light text-ink outline-none
                    placeholder:text-mid focus:border-ink"
       />
 
@@ -70,7 +70,7 @@ export function Search({ onFilm, busy }) {
                 // list before a click ever landed
                 onMouseDown={e => { e.preventDefault(); pick(f) }}
                 className="block w-full cursor-pointer truncate border-0 bg-transparent px-[6px] py-[4px]
-                           text-left font-mono text-[12.5px] font-light text-mid outline-none
+                           text-left font-ui text-[13.5px] font-light text-mid outline-none
                            hover:text-ink focus-visible:text-ink"
               >
                 {f.title}

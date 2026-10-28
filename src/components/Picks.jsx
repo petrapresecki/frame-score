@@ -18,7 +18,7 @@ export function Picks({ film, onFilm }) {
                 type="button"
                 aria-current={current}
                 onClick={() => onFilm(f)}
-                className="group block w-full cursor-pointer border-0 bg-transparent p-0 text-left font-mono text-ink"
+                className="group block w-full cursor-pointer border-0 bg-transparent p-0 text-left font-ui text-ink"
               >
                 <img
                   src={shot(f.stills[0]).probe}
@@ -27,11 +27,11 @@ export function Picks({ film, onFilm }) {
                   className={`block aspect-video w-full object-cover transition-opacity duration-300
                               ${current ? 'opacity-100' : 'opacity-75 group-hover:opacity-100'}`}
                 />
-                <span className={`mt-[7px] block truncate border-b-2 pb-[3px] text-[12.5px] font-normal
+                <span className={`mt-[7px] block truncate border-b-2 pb-[3px] text-[13.5px] font-normal
                                   ${current ? 'border-[var(--tone)]' : 'border-transparent group-hover:border-rule'}`}>
                   {f.title.toLowerCase()}
                 </span>
-                <span className="mt-[2px] block truncate text-[11.5px] text-mid">{f.by.toLowerCase()}, {f.year}</span>
+                <span className="mt-[2px] block truncate text-[12.5px] text-mid">{f.by.toLowerCase()}, {f.year}</span>
               </button>
             </li>
           )

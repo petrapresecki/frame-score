@@ -1,5 +1,6 @@
-IBM Plex Mono (Mike Abbink, Bold Monday for IBM), SIL Open Font License 1.1.
-Latin subset from Google Fonts, weights 300, 400 and 500. The only face on the page.
+Jura (Daniel Johnson), SIL Open Font License 1.1. Latin subset from Google Fonts,
+variable 300–600. The only face on the page — her pick of three tried on the
+real page (Lexend Exa, Cormorant Garamond with DM Mono, Jura).
 
 Ribes and Sligoil belong to the earlier A2 skin and are not loaded.
-The fan-site skin (direction K) and its four faces now live in creative-kit as the Rhinestone theme.
+The fan-site skin (direction K) and its four faces live in creative-kit as the Rhinestone theme.

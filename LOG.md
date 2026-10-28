@@ -476,5 +476,8 @@ was replaced with one from this piece. Then she asked to keep the blue.
 - **The four-bar glyph** by the name fills the band being heard.
 - **The tone** is `accent.js` again — the frame's hue held 62° clear of the
   field, and greyed when the frame has no colour.
-- One face: IBM Plex Mono at 300/400/500. Secondary text is white at 72% for
-  4.6:1 on the field; at 55% it failed.
+- One face: Jura, light — her pick of three tried on the real page (Lexend Exa,
+  Cormorant Garamond with DM Mono, Jura) for something cool and ambient.
+  Secondary text is white at 72% for 4.6:1 on the field; at 55% it failed.
+- Picks became labelled stills under the frame; the grade got reset all and a
+  ↺ per moved row; the plates left the interface (they remain in the instrument).

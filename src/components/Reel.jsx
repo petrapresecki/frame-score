@@ -252,7 +252,7 @@ export function Reel({
           type="button"
           onClick={onToggle}
           aria-pressed={playing}
-          className="group flex cursor-pointer items-center gap-[10px] border-0 bg-transparent p-0 font-mono text-[14px]
+          className="group flex cursor-pointer items-center gap-[10px] border-0 bg-transparent p-0 font-ui text-[14px]
                      font-normal text-ink"
         >
           <span
@@ -269,7 +269,7 @@ export function Reel({
           <button
             type="button"
             onClick={() => onOpen(!open)}
-            className="cursor-pointer border-0 bg-transparent p-0 font-mono text-[12.5px] font-light tabular-nums
+            className="cursor-pointer border-0 bg-transparent p-0 font-ui text-[13.5px] font-light tabular-nums
                        text-mid hover:text-ink"
           >
             {open ? 'close the reel' : 'the reel'} · {String(index + 1).padStart(2, '0')}/{String(shots.length).padStart(2, '0')}
