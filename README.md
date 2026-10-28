@@ -1,6 +1,6 @@
 # Frame Score
 
-![Grading a frame in Frame Score](docs/preview.gif)
+![Grading a still from The Grand Budapest Hotel in Frame Score](docs/preview.gif)
 
 Live at [frame-score.pages.dev](https://frame-score.pages.dev/). Turn the sound on and press play.
 
