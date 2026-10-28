@@ -1,9 +1,10 @@
 // TMDB, reduced to the two questions this piece asks: which film, and what are
 // its frames.
 //
-// The key lives on the dev server (see vite.config.js) and is never shipped to
-// the browser. Images come straight from the CDN, which is public and
-// CORS-open — that matters, because a tainted canvas cannot be measured.
+// The key lives on the server (vite.config.js in dev, functions/api/tmdb in
+// production) and is never shipped to the browser. Images come straight from
+// the CDN, which is public and CORS-open — that matters, because a tainted
+// canvas cannot be measured.
 
 const API = '/api/tmdb'
 const CDN = 'https://image.tmdb.org/t/p'
@@ -46,11 +47,16 @@ export async function shotsFor(id, max = 30) {
     .filter(b => b.iso_639_1 === null && b.aspect_ratio > 1.6)
     .sort((a, b) => b.vote_count - a.vote_count)
     .slice(0, max)
-    .map((b, i) => ({
-      id: b.file_path,
-      n: i,
-      probe: CDN + '/' + PROBE + b.file_path,
-      reel: CDN + '/' + REEL + b.file_path,
-      gate: CDN + '/' + GATE + b.file_path,
-    }))
+    .map((b, i) => shot(b.file_path, i))
+}
+
+// A backdrop's file_path, at the three sizes the piece uses.
+export function shot(path, n = 0) {
+  return {
+    id: path,
+    n,
+    probe: CDN + '/' + PROBE + path,
+    reel: CDN + '/' + REEL + path,
+    gate: CDN + '/' + GATE + path,
+  }
 }
