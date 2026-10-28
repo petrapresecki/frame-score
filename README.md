@@ -1,5 +1,9 @@
 # Frame Score
 
+![Grading a frame in Frame Score](docs/preview.gif)
+
+Live at [frame-score.pages.dev](https://frame-score.pages.dev/). Turn the sound on and press play.
+
 Grade a film frame and hear the grade. The shot is read in four vertical bands,
 left to right; the colour of each becomes a chord, the brightest points become a
 motif, and the whole reading is played back as an ambient loop. Change the grade
