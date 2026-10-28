@@ -155,12 +155,14 @@ export default function App() {
             {M && <span className="flex-1">{keyName(M)} · {tempoWord(M.activity)} · {M.motif.length} notes</span>}
             <span className="text-mid max-[900px]:basis-full">{credit}</span>
           </Reel>
+          <Picks film={shown} onFilm={onFilm} />
         </section>
 
         <section aria-label="what the frame reads as" className="min-w-0">
           <Contours core={core} canvasRef={canvasRef} reading={reading} />
           <PrinterPoints core={core} grade={reading?.grade ?? {}} onGesture={() => {}} />
-          <Picks film={shown} onFilm={onFilm}>
+          <p className="m-0 mt-[22px] leading-[1.9]">
+            <span className="mr-[10px] text-mid">or try</span>
             <Sources core={core} srcIndex={reading?.srcIndex ?? 0} onPick={clearReel} fileRef={fileRef} />
             <button
               type="button"
@@ -170,7 +172,7 @@ export default function App() {
             >
               your own frame
             </button>
-          </Picks>
+          </p>
         </section>
       </div>
 

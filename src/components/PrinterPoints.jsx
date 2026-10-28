@@ -87,7 +87,21 @@ function Point({ p, value, core, onGesture }) {
           {String(pts).padStart(2, '0')}
         </button>
       </td>
-      <td className="text-right tabular-nums">{reading}</td>
+      <td className="text-right tabular-nums">
+        {/* a moved row can be put back on its own; Backspace on the numeral does the same */}
+        {pts !== DATUM && (
+          <button
+            type="button"
+            onClick={() => { onGesture(); commit(DATUM) }}
+            aria-label={`reset ${p.label.toLowerCase()} to 25`}
+            title="back to 25"
+            className="mr-[12px] cursor-pointer border-0 bg-transparent p-0 font-mono text-[13px] text-mid hover:text-ink"
+          >
+            ↺
+          </button>
+        )}
+        {reading}
+      </td>
     </tr>
   )
 }
@@ -95,14 +109,27 @@ function Point({ p, value, core, onGesture }) {
 // Four integers on a datum of 25. The numeral is the control: drag it, or
 // focus it and use the arrow keys (shift for five, backspace for the datum).
 export function PrinterPoints({ core, grade, onGesture }) {
+  const moved = core ? PARAMS.some(p => Math.round(toPoints(p, grade[p.k] ?? p.val)) !== DATUM) : false
   return (
     <table className="mt-[26px] w-full border-collapse">
-      <caption className="sr-only">the grade, in printer points; drag a number, or focus it and use the arrow keys</caption>
+      <caption className="sr-only">the grade, in printer points; drag a number, or focus it and use the arrow keys, backspace for 25</caption>
       <thead>
         <tr className="border-b border-rule text-mid">
           <th className="pb-[8px] text-left font-light">grade</th>
           <th className="pb-[8px] text-left font-light">points</th>
-          <th className="pb-[8px] text-right font-light">value</th>
+          <th className="pb-[8px] text-right font-light">
+            <button
+              type="button"
+              disabled={!moved}
+              onClick={() => { onGesture(); core.reset() }}
+              className="mr-[16px] cursor-pointer border-0 bg-transparent p-0 font-mono text-[12.5px] font-light text-ink
+                         underline decoration-rule underline-offset-4 hover:decoration-ink disabled:cursor-default
+                         disabled:text-mid disabled:no-underline disabled:opacity-60"
+            >
+              reset all
+            </button>
+            value
+          </th>
         </tr>
       </thead>
       <tbody>
