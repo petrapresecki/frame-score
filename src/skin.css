@@ -1,65 +1,65 @@
 @import 'tailwindcss';
 
-/* DIRECTION A2 — one continuous surface (C-03).
+/* DIRECTION B — the light table, on the bay's blue.
  *
- * Borrowed object: the colour-timing bay. The four grade controls are printer
- * points — integers scrubbed on a tape, 25 at the datum — and the measurements
- * the engine already makes are printed on the instrument's own face rather than
- * hidden in a diagnostics panel.
+ * The structure comes from amitlankri.com, her pick: the work beside one
+ * hairline drawing, a quiet table under both. Every mark is Frame Score's own —
+ * the frame's light drawn as contours, the melody's notes as round heads on
+ * it, a four-bar glyph by the name, and the sounding bar's row filling over its
+ * four seconds.
  *
- * Ground: a saturated blue field. Type: Ribes (Luigi Gorlero / Collletttivo,
- * SIL OFL), proportional, set as display.
- * Colour: the field is fixed; the accent is sampled from the loaded frame and
- * forced clear of the ground hue, so the image still decides. It is a live
- * custom property, set on the bay on every render — never a Tailwind colour.
+ * Ground: the saturated blue field kept from direction A2 (#0a38ff), with
+ * every line and letter in white. One face, Jura (Daniel Johnson, OFL), light —
+ * thin and rounded, like the labels on a synthesiser; her pick of three.
+ * The tone — whatever is sounding — is sampled from the frame and forced clear
+ * of the ground hue (src/accent.js). It is a live custom property, never a token.
  */
 
-/* Ribes ships three static styles. They are declared over weight ranges so the
-   500 and 700 used in the components resolve to the nearest cut Ribes has
-   rather than being synthesised by the browser. */
-@font-face {
-  font-family: 'Ribes';
-  src: url('/fonts/Ribes-Light.woff2') format('woff2');
-  font-weight: 300; font-style: normal; font-display: swap;
-}
-@font-face {
-  font-family: 'Ribes';
-  src: url('/fonts/Ribes-Regular.woff2') format('woff2');
-  font-weight: 400 500; font-style: normal; font-display: swap;
-}
-@font-face {
-  font-family: 'Ribes';
-  src: url('/fonts/Ribes-Black.woff2') format('woff2');
-  font-weight: 600 900; font-style: normal; font-display: swap;
-}
+@font-face { font-family: 'Jura'; src: url('/fonts/Jura-Variable.woff2') format('woff2'); font-weight: 300 600; font-display: swap; }
 
 @theme {
-  /* hue 229 — cyan-leaning, deliberately off the violet-blue of the sites this
-     was compared against */
   --color-field: #0a38ff;
-  --color-field-deep: #0722a8;
-  --color-ink: #eaf0ff;
-  --color-ink-half: rgba(234, 240, 255, 0.5);
-  --color-ink-quarter: rgba(234, 240, 255, 0.26);
-  --color-rule: rgba(234, 240, 255, 0.28);
-  --color-rule-faint: rgba(234, 240, 255, 0.18);
-  --font-display: 'Ribes', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --color-ink: #eef1ff;
+  --color-mid: rgba(238, 241, 255, 0.72);     /* 4.6:1 on the field */
+  --color-rule: rgba(238, 241, 255, 0.3);
+  --font-ui: 'Jura', 'Helvetica Neue', Arial, sans-serif;
 }
 
 @layer base {
-  html, body, #root { height: 100%; }
+  html, body { background: var(--color-field); }
   body {
-    background: var(--color-field);
+    margin: 0;
     color: var(--color-ink);
-    font-family: var(--font-display);
-    font-weight: 400;
-    overflow: hidden;
+    font-family: var(--font-ui);
+    font-weight: 300;
+    font-size: 12.5px;
+    line-height: 1.45;
     -webkit-font-smoothing: antialiased;
   }
-  /* the accent before a frame has been read */
-  #root { --accent: #ffb03a; }
+  /* the tone before a frame has been read; App sets it from the frame */
+  #root { --tone: hsl(38 100% 61%); --accent: var(--tone); }
+  :focus-visible { outline: 1px solid var(--color-ink); outline-offset: 3px; }
 }
+
+@layer components {
+  /* a note head on the drawing: it fills with the tone and rings outward when
+     the engine strikes it */
+  .note-head { position: relative; display: block; width: 12px; height: 12px; border-radius: 50%;
+    border: 1px solid var(--color-ink); background: var(--color-field); transition: background .6s, border-color .6s; }
+  .note-head::after { content: ''; position: absolute; inset: -1px; border-radius: 50%; border: 1px solid var(--tone); opacity: 0; }
+  .note-hit .note-head { background: var(--tone); border-color: var(--tone); transition: none; }
+  .note-hit .note-head::after { animation: ripple 1.2s ease-out; }
+
+  /* the sounding bar: a line fills across its row over the bar's four seconds */
+  .bar-on { background: linear-gradient(var(--tone), var(--tone)) left bottom / 0% 2px no-repeat;
+    animation: fill 4s linear forwards; }
+}
+
+@keyframes ripple { from { opacity: .9; transform: scale(1); } to { opacity: 0; transform: scale(4.5); } }
+@keyframes fill { to { background-size: 100% 2px; } }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
+  .note-hit .note-head::after { animation: none; }
+  .bar-on { animation: none; background-size: 100% 2px; }
 }

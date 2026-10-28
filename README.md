@@ -50,4 +50,4 @@ use public-domain sources.
 - `src/core.js` — the instrument: canvas, grade state, analysis and engine. Plain
   JavaScript, and the last file that knows nothing about the interface.
 - `src/App.jsx`, `src/components/` — the interface, in React. Tailwind v4 for
-  styling; the accent colour is sampled from the frame at runtime.
+  styling; the loaded shot is tiled behind the page as its wallpaper.

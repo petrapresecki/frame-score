@@ -407,3 +407,77 @@ being inferred from `-top-2 -bottom-2`.
 
 Rule for anything drawn over the frame from here: a canvas overlay needs an
 explicit CSS size. `inset-0` is not a size for a replaced element.
+
+
+## 2026-10-28 — direction K, a fan site for one shot
+
+Her call, after four specimens (a printed score, a lavender editorial page, a
+violet sticker board, a liquid-chrome portfolio): the interface now borrows from
+the sites Kristen Cabrera made (kris10cabrera.com), one move from each, built
+around this piece's own content. The instrument is untouched — no file below
+`core.js` changed.
+
+- The wallpaper is the loaded shot, ungraded, tiled at 220px and washed pink.
+  Taken from `core.src` once per source, never per grade.
+- The title says what the page is about: "these are the 4 chords of <shot>."
+- Each band's chord is written on the band it was read from, and the sounding
+  one is lit — driven by `core.tap` band events (`useBand`), never by the
+  transport.
+- The readout is a cluster of flat white silhouettes, after eylonmalkevich.com
+  (her pick): a key for the key, a bulb for the light, a metronome for the pace,
+  notes for the tune, a speaker for the room, a drop for the colour. Pointing at
+  one fills it with the shot. A "HEARD:" list under it does the same from the
+  keyboard. All eighteen values the tape printed are still there, so it still
+  works as the tuning instrument.
+- Killed on the way: the readout as a stack of draggable cards (after
+  badbunnybebefan), then as glossy Y2K stickers (the kit's drag-collage) — the
+  stickers grew past their boxes and read as clutter.
+- Picks are hearts. A pick names its key only after it has been heard, because
+  `analyse()` keeps state across calls (its palette hold), and reading a pick in
+  the background would disturb the frame actually at the gate.
+- Chord names come from `names.js`, which names voicings and decides nothing.
+
+### Found while building it
+
+- The reel used to let the page name a film the moment its reel opened, while
+  the gate — and the sound — was still the previous frame. Everything that names
+  the frame now names what is at the gate.
+- The same After Hours still read as `Dm · G7 · Dm · G/D` in the old interface
+  on 28 Oct and `Dm · Dm · Dm · G/D` in every run since, with no instrument file
+  changed. The band hues differ (`6,5,0,1` against `6,0,0,1`). Not chased: worth
+  checking whether `analyse()`'s memory of the previous source can still leak
+  into band hues.
+
+Ribes and Sligoil are left in `public/fonts` but no longer loaded.
+
+
+## 2026-10-29 — direction B, the light table on the blue
+
+Direction K (the fan site) was loved and dropped: it did not sound like the
+music. It is kept in creative-kit as the Rhinestone theme, and in this repo's
+history (`e416aca`, `5ec5ea2`).
+
+Her references this time: ommolette.site, byotone.com and, above all,
+amitlankri.com. A first specimen followed Amit's page too closely (black name
+tag, bracketed capitals, dashed rules, square markers, a black row with a
+ticker); she asked for it to be less of a copy, and every one of those marks
+was replaced with one from this piece. Then she asked to keep the blue.
+
+- **The contour drawing.** The graded frame, blurred and traced with marching
+  squares at its own 25th, 55th and 82nd percentile of light — percentiles,
+  not fixed levels, because fixed levels drew a night plate as one line. A
+  grade redraws it.
+- **The notes on it.** One head per motif note, at the column it was taken
+  from and that column's brightest point. It fills with the tone and rings when
+  `core.tap` says the note was struck.
+- **The bars.** A plain table; the sounding row comes forward and a 2px line
+  fills across it over its four seconds, restarted by a band-change count from
+  `useBand` rather than by the clock.
+- **The four-bar glyph** by the name fills the band being heard.
+- **The tone** is `accent.js` again — the frame's hue held 62° clear of the
+  field, and greyed when the frame has no colour.
+- One face: Jura, light — her pick of three tried on the real page (Lexend Exa,
+  Cormorant Garamond with DM Mono, Jura) for something cool and ambient.
+  Secondary text is white at 72% for 4.6:1 on the field; at 55% it failed.
+- Picks became labelled stills under the frame; the grade got reset all and a
+  ↺ per moved row; the plates left the interface (they remain in the instrument).

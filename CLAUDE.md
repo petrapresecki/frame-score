@@ -99,12 +99,18 @@ The split is the point: nothing below `core.js` knows React exists.
 | `src/plates.js`               | placeholder frames drawn in code                                                                |
 | `src/core.js`                 | the instrument: canvas, grade state, analysis and engine, behind a listener                     |
 | `src/useFrameScore.js`        | the one hook that holds `Core` in a ref and hands React the last reading                        |
-| `src/App.jsx`                 | direction A2, the bay: tape left, frame right, points beneath                                   |
-| `src/components/Tape.jsx`     | the readout, printed on the instrument's own face                                               |
-| `src/components/Frame.jsx`    | the frame as transport, and the marks drawn over it                                             |
-| `src/components/PrinterPoints.jsx` | the four grade controls as scrubbed numerals                                               |
-| `src/components/Sources.jsx`  | plates and your own file, as numerals                                                           |
-| `src/skin.css`                | the Tailwind theme: field, ink, Ribes. The accent is a live custom property, never a token      |
+| `src/App.jsx`                 | direction B, the light table on the blue: the frame left, its contour drawing and the grade right, the bars beneath |
+| `src/names.js`                | words for decisions: chord names from voicings, the key, a tempo word for activity — names only, never decides |
+| `src/useBand.js`              | which band the engine says it is playing, and a count of band changes, from `core.tap`          |
+| `src/accent.js`               | the tone: the frame's hue, forced clear of the blue ground. Used only for what is sounding      |
+| `src/components/Frame.jsx`    | the frame as transport, the marks drawn over it, and the sounding band underlined               |
+| `src/components/Reel.jsx`     | the gate, the reel of candidate shots, and the transport row                                    |
+| `src/components/Contours.jsx` | the frame's light as contour lines, with the melody's notes as heads that ring when struck      |
+| `src/components/PrinterPoints.jsx` | the four grade controls as scrubbed numerals, in a table, with reset all and a ↺ per moved row |
+| `src/components/Bars.jsx`     | the four bars as a table; the sounding row fills over its four seconds                          |
+| `src/components/Picks.jsx`    | my picks as labelled stills under the frame                                                    |
+| `src/components/About.jsx`    | the concept, in a panel that slides in from the right and back; Escape or a click outside closes it |
+| `src/skin.css`                | the Tailwind theme: the blue field, white ink, Jura. The tone is a live custom property, never a token |
 | `LOG.md`                      | the build log — what was tried and killed, and why                                              |
 
 The picture never works out what is sounding for itself. `Engine.say` schedules

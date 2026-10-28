@@ -28,8 +28,9 @@ const LOUPE = 0.58       // a candidate's size, in frame widths — clearly not 
 const OPEN = 0.12        // per-frame ease of the reel opening and closing
 
 export function Reel({
-  core, canvasRef, playing, onToggle, cueGone,
+  core, canvasRef, playing, onToggle,
   shots, index, onIndex, onPick, open, onOpen,
+  band, children,
 }) {
   const boxRef = useRef(null)
   const gateRef = useRef(null)
@@ -182,14 +183,10 @@ export function Reel({
   }
 
   const has = shots.length > 0
-  const cue = !has ? 'click to run'
-    : open ? 'drag to spin · click the centre to set'
-    : 'click to run · drag for the reel'
 
   return (
     <div
-      className="col-start-2 row-start-1 self-center justify-self-start w-full
-                 max-[900px]:col-start-1 max-[900px]:row-start-2"
+      className="w-full"
       // clipped sideways so the reel runs off the edge of its column rather
       // than over the tape, but open vertically: the playhead overhangs the
       // frame and the cue sits below it
@@ -209,16 +206,16 @@ export function Reel({
           if (e.key === 'ArrowRight') { e.preventDefault(); onOpen(true); onIndex(Math.min(shots.length - 1, index + 1)) }
           if (e.key === 'ArrowLeft') { e.preventDefault(); onOpen(true); onIndex(Math.max(0, index - 1)) }
         }}
-        className={`relative aspect-video w-full max-w-[min(100%,calc((100vh_-_210px)*16/9))]
-                    select-none outline-none touch-none
-                    focus-visible:shadow-[0_0_0_2px_var(--accent)]
+        aria-label={playing ? 'the frame, playing. space to pause' : 'the frame. space to play'}
+        className={`relative aspect-video w-full select-none outline-none touch-none
+                    focus-visible:shadow-[0_0_0_1px_var(--color-field),0_0_0_2px_var(--color-ink)]
                     ${open ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'}`}
         style={{ perspective: `${Math.max(1, w) * 2.4}px` }}
       >
         {/* the gate: the graded canvas, the marks, the playhead. Only ever
             holds a shot that was picked. */}
         <div ref={gateRef} className="absolute inset-0">
-          <Frame core={core} canvasRef={canvasRef} playing={playing} />
+          <Frame core={core} canvasRef={canvasRef} playing={playing} band={band} />
         </div>
 
         {shots.map((s, i) => (
@@ -250,51 +247,36 @@ export function Reel({
       </div>
 
       {/* Kept outside the frame so the horizontal clip cannot reach it. */}
-      <div className="relative mt-[9px] flex items-baseline gap-[14px] text-[11.5px]">
-        {/* the transport, said plainly — the frame is still the big switch, but
-            it now has two jobs and a running loop needs a stop that is not a
-            guess */}
+      <div className="relative mt-[14px] flex flex-wrap items-center gap-x-[16px] gap-y-[6px]">
         <button
           type="button"
           onClick={onToggle}
           aria-pressed={playing}
-          className="flex cursor-pointer items-baseline gap-[7px] border-0 bg-transparent p-0
-                     font-[inherit] text-[11.5px] text-ink outline-none
-                     transition-colors duration-[250ms]
-                     hover:text-[var(--accent)] focus-visible:text-[var(--accent)]"
+          className="group flex cursor-pointer items-center gap-[10px] border-0 bg-transparent p-0 font-ui text-[14px]
+                     font-normal text-ink"
         >
-          <span aria-hidden className="relative top-[1px] inline-flex h-[8px] w-[8px] items-center gap-[2px]">
-            {playing ? (
-              <>
-                <i className="block h-[8px] w-[2.5px] bg-current" />
-                <i className="block h-[8px] w-[2.5px] bg-current" />
-              </>
-            ) : (
-              <i
-                className="block h-0 w-0 border-y-[4px] border-l-[7px] border-y-transparent"
-                style={{ borderLeftColor: 'currentColor' }}
-              />
-            )}
+          <span
+            aria-hidden
+            className="grid h-[30px] w-[30px] place-items-center rounded-full border border-ink text-[10px]
+                       transition-colors duration-200 group-hover:bg-ink group-hover:text-field"
+          >
+            {playing ? '❚❚' : '▶'}
           </span>
           {playing ? 'pause' : 'play'}
         </button>
-
-        <p
-          className={`m-0 text-ink-half transition-opacity delay-200 duration-[1100ms] ease-out
-                      ${cueGone && !open ? 'opacity-0' : 'opacity-100'}`}
-        >
-          {cue}
-        </p>
+        {children}
         {has && (
           <button
             type="button"
             onClick={() => onOpen(!open)}
-            className="ml-auto cursor-pointer border-0 bg-transparent p-0 font-[inherit] text-[11.5px]
-                       tabular-nums text-ink-quarter outline-none transition-colors duration-[250ms]
-                       hover:text-[var(--accent)] focus-visible:text-[var(--accent)]"
+            className="cursor-pointer border-0 bg-transparent p-0 font-ui text-[13.5px] font-light tabular-nums
+                       text-mid hover:text-ink"
           >
-            {String(index + 1).padStart(2, '0')} / {String(shots.length).padStart(2, '0')}
+            {open ? 'close the reel' : 'the reel'} · {String(index + 1).padStart(2, '0')}/{String(shots.length).padStart(2, '0')}
           </button>
+        )}
+        {open && has && (
+          <p className="m-0 basis-full text-mid">drag to spin, click the one in the middle to grade it</p>
         )}
       </div>
     </div>

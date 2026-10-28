@@ -5,9 +5,9 @@
 // One still loads straight into the gate; more than one opens the reel.
 
 export const PICKS = [
-  { id: 10843, title: 'After Hours', year: '1985', stills: ['/gTPH5zIvkl8HV9vLsqOiPBVTsSB.jpg'] },
-  { id: 185, title: 'A Clockwork Orange', year: '1971', stills: ['/qhlt4mZR68VG9C1Hlwlq10D8KHJ.jpg'] },
-  { id: 655, title: 'Paris, Texas', year: '1984', stills: ['/5G0KD5BmLRY4JikHw41IclaHSnA.jpg'] },
-  { id: 391, title: 'A Fistful of Dollars', year: '1964', stills: ['/vbZbbmksnvZVqGg55DFjr1DozjW.jpg'] },
-  { id: 10428, title: 'Hackers', year: '1995', stills: ['/h4dwRbvua0y2HaxPwcdcjheX76a.jpg'] },
+  { id: 10843, title: 'After Hours', by: 'Martin Scorsese', year: '1985', stills: ['/gTPH5zIvkl8HV9vLsqOiPBVTsSB.jpg'] },
+  { id: 185, title: 'A Clockwork Orange', by: 'Stanley Kubrick', year: '1971', stills: ['/qhlt4mZR68VG9C1Hlwlq10D8KHJ.jpg'] },
+  { id: 655, title: 'Paris, Texas', by: 'Wim Wenders', year: '1984', stills: ['/5G0KD5BmLRY4JikHw41IclaHSnA.jpg'] },
+  { id: 391, title: 'A Fistful of Dollars', by: 'Sergio Leone', year: '1964', stills: ['/vbZbbmksnvZVqGg55DFjr1DozjW.jpg'] },
+  { id: 10428, title: 'Hackers', by: 'Iain Softley', year: '1995', stills: ['/h4dwRbvua0y2HaxPwcdcjheX76a.jpg'] },
 ]

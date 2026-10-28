@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 // not an effect.
 const BANDS = 4
 
-export function Frame({ core, canvasRef, playing }) {
+export function Frame({ core, canvasRef, playing, band = null }) {
   const wrapRef = useRef(null)
   const marksRef = useRef(null)
   const headRef = useRef(null)
@@ -187,8 +187,17 @@ export function Frame({ core, canvasRef, playing }) {
                     ${playing ? 'opacity-100' : 'opacity-0'}`}
       />
 
+      {/* the band being heard, underlined in the tone at the foot of the shot */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 grid grid-cols-4">
+        {[0, 1, 2, 3].map(i => (
+          <span key={i} className={`transition-shadow duration-500 ${band === i ? 'shadow-[inset_0_-2px_0_var(--tone)]' : ''}`} />
+        ))}
+      </div>
+
       {over && (
-        <div className="absolute inset-0 bg-field-deep outline-2 -outline-offset-8 outline-[var(--accent)]" />
+        <div className="absolute inset-0 grid place-items-center bg-field/85 outline-1 -outline-offset-8 outline-dashed outline-ink">
+          <span className="text-[14px]">drop it here</span>
+        </div>
       )}
     </div>
   )
