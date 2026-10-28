@@ -1,9 +1,10 @@
 // TMDB, reduced to the two questions this piece asks: which film, and what are
 // its frames.
 //
-// The key lives on the dev server (see vite.config.js) and is never shipped to
-// the browser. Images come straight from the CDN, which is public and
-// CORS-open — that matters, because a tainted canvas cannot be measured.
+// The key lives on the server (vite.config.js in dev, functions/api/tmdb in
+// production) and is never shipped to the browser. Images come straight from
+// the CDN, which is public and CORS-open — that matters, because a tainted
+// canvas cannot be measured.
 
 const API = '/api/tmdb'
 const CDN = 'https://image.tmdb.org/t/p'

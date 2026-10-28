@@ -18,6 +18,20 @@ npm install
 npm run dev
 ```
 
+Film search needs a TMDB key: copy `.env.example` to `.env` for the dev server.
+In production the same key is a Pages secret, read by `functions/api/tmdb`:
+
+```bash
+npx wrangler pages secret put TMDB_KEY --project-name frame-score
+```
+
+## Deploy
+
+```bash
+npm run build
+npx wrangler pages deploy dist --project-name frame-score
+```
+
 ## Your own frames
 
 Drop any image onto the frame in the UI. To keep a working set on disk, put
