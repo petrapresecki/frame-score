@@ -1,0 +1,8 @@
+All four faces are SIL Open Font License 1.1, Latin subsets from Google Fonts.
+
+Courier Prime      Alan Dague-Greene (Quote-Unquote Apps)   body, labels, cards
+Pixelify Sans      Stefie Justprince                        the glowing title bar, headings
+Instrument Serif   Rodrigo Fuenzalida, Jordan Egstad         numbers, names, the front card
+Pinyon Script      Nicole Fally (Sorkin Type)               "play"
+
+Ribes and Sligoil belong to the previous skin (direction A2) and are no longer loaded.

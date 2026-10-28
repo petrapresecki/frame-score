@@ -78,38 +78,32 @@ function Point({ p, value, core, onGesture }) {
       onKeyDown={keydown}
       // it is a <button>, so a bare click would otherwise do nothing at all
       onClick={e => e.preventDefault()}
-      className="group block touch-none cursor-ew-resize border-0 bg-none p-0 text-left
-                 font-[inherit] text-inherit outline-none"
+      className={`group block touch-none cursor-ew-resize border-[1.5px] border-ink px-[9px] pb-[7px] pt-[5px]
+                  text-left font-[inherit] text-inherit outline-none transition-shadow duration-300
+                  focus-visible:shadow-[0_0_0_3px_#fff,0_0_0_5px_var(--color-glow)]
+                  ${pts === DATUM ? 'bg-white/80' : 'bg-white shadow-[0_0_0_3px_#fff,0_0_14px_var(--color-glow-soft)]'}`}
     >
+      {/* a counter in a box, as thinkinboutyou counts its crushes; it glows
+          once it has been moved off the datum */}
       <span
-        className={`block text-[clamp(38px,6.4vw,82px)] font-medium leading-[0.82]
-                    tracking-[-0.03em] tabular-nums
-                    ${pts === DATUM ? 'text-ink' : 'text-[var(--accent)]'}`}
+        className={`block font-serif text-[40px] leading-none tabular-nums max-[900px]:text-[34px]
+                    ${pts === DATUM ? 'text-ink' : 'text-glow [text-shadow:0_0_6px_var(--color-glow-soft)]'}`}
       >
         {String(pts).padStart(2, '0')}
       </span>
-      <span
-        className="mt-[11px] flex items-baseline justify-between gap-2 border-t border-rule
-                   pt-[7px] text-[11.5px] leading-none
-                   group-focus-visible:border-[var(--accent)]"
-      >
-        <span className="text-ink group-focus-visible:text-[var(--accent)]">
-          {p.label.toLowerCase()}
-        </span>
-        <span className="tabular-nums text-ink-half">{reading}</span>
+      <span className="mt-[2px] flex flex-col text-[12.5px] leading-tight">
+        <span>{p.label.toLowerCase()}</span>
+        <span className="tabular-nums text-ink-soft">{reading}</span>
       </span>
     </button>
   )
 }
 
-// Four integers on a datum of 25. The numeral is the control: drag it.
+// Four integers on a datum of 25. The numeral is the control: drag it, or
+// focus it and use the arrow keys (shift for five, backspace for the datum).
 export function PrinterPoints({ core, grade, onGesture }) {
   return (
-    <div
-      className="col-start-2 row-start-2 grid max-w-[min(100%,calc((100vh_-_210px)*16/9))]
-                 grid-cols-4 items-end gap-[clamp(12px,3vw,54px)] pt-[34px]
-                 max-[900px]:col-start-1"
-    >
+    <div className="mt-[12px] grid grid-cols-4 gap-[10px] max-[900px]:grid-cols-2">
       {core && PARAMS.map(p => (
         <Point key={p.k} p={p} value={grade[p.k]} core={core} onGesture={onGesture} />
       ))}

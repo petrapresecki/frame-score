@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { searchFilms } from '../tmdb.js'
 
-// A film title, and the reel it loads. Set as a caption, not as a search
-// engine: one rule, no box, no button — the field is a line you type on.
-export function Search({ onFilm, busy, film }) {
+// A film title, and the reel it loads. A plain boxed field, as on
+// thinkinboutyou: no icon, no button — Enter takes the first match.
+export function Search({ onFilm, busy }) {
   const [q, setQ] = useState('')
   const [list, setList] = useState([])
   const [open, setOpen] = useState(false)
@@ -45,24 +45,23 @@ export function Search({ onFilm, busy, film }) {
         placeholder="search a film"
         aria-label="search a film"
         spellCheck={false}
-        className="w-full border-0 border-b border-rule-faint bg-transparent pb-[7px]
-                   font-[inherit] text-[11.5px] text-ink outline-none
-                   transition-colors duration-[250ms]
-                   placeholder:text-ink-quarter
-                   focus:border-[var(--accent)]"
+        className="w-full border-[1.5px] border-ink bg-white/80 px-[10px] py-[7px]
+                   font-mono text-[14px] text-ink outline-none
+                   placeholder:text-ink-soft
+                   focus:bg-white focus:shadow-[inset_0_0_0_3px_#f3d7ff]"
       />
 
-      {/* what is loaded, held under the rule where the tape's own labels sit */}
-      <p className="m-0 mt-[7px] flex items-baseline gap-[8px] text-[11.5px] text-ink-quarter">
-        <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-          {err ?? (busy ? 'reading…' : film ? `${film.title}${film.year ? ` · ${film.year}` : ''}` : 'or drop a frame')}
-        </span>
-      </p>
+      {/* only says something when there is something to say */}
+      {(err || busy) && (
+        <p role="status" className="m-0 mt-[5px] font-mono text-[12.5px] italic text-ink-soft">
+          {err ?? 'reading the reel…'}
+        </p>
+      )}
 
       {open && list.length > 0 && (
         <ul
-          className="absolute left-0 right-0 top-[30px] z-50 m-0 list-none rounded-[2px]
-                     bg-field-deep p-[6px] text-[11.5px] shadow-[0_10px_30px_rgba(0,0,0,.35)]"
+          className="absolute left-0 right-0 top-[38px] z-50 m-0 list-none border-[1.5px] border-ink
+                     bg-white p-[4px] text-[14px] shadow-[0_10px_30px_rgba(60,0,40,.25)]"
         >
           {list.map(f => (
             <li key={f.id}>
@@ -71,12 +70,12 @@ export function Search({ onFilm, busy, film }) {
                 // onMouseDown, not onClick: the input's blur would close the
                 // list before a click ever landed
                 onMouseDown={e => { e.preventDefault(); pick(f) }}
-                className="block w-full cursor-pointer truncate border-0 bg-transparent px-[6px] py-[5px]
-                           text-left font-[inherit] text-[11.5px] text-ink-half outline-none
-                           transition-colors duration-150 hover:text-[var(--accent)] focus-visible:text-[var(--accent)]"
+                className="block w-full cursor-pointer truncate border-0 bg-transparent px-[6px] py-[4px]
+                           text-left font-mono text-[14px] text-ink outline-none
+                           hover:bg-blush hover:text-glow"
               >
                 {f.title}
-                {f.year && <i className="not-italic text-ink-quarter"> · {f.year}</i>}
+                {f.year && <i className="text-ink-soft"> · {f.year}</i>}
               </button>
             </li>
           ))}

@@ -99,12 +99,16 @@ The split is the point: nothing below `core.js` knows React exists.
 | `src/plates.js`               | placeholder frames drawn in code                                                                |
 | `src/core.js`                 | the instrument: canvas, grade state, analysis and engine, behind a listener                     |
 | `src/useFrameScore.js`        | the one hook that holds `Core` in a ref and hands React the last reading                        |
-| `src/App.jsx`                 | direction A2, the bay: tape left, frame right, points beneath                                   |
-| `src/components/Tape.jsx`     | the readout, printed on the instrument's own face                                               |
+| `src/App.jsx`                 | direction K, a fan site for one shot: glowing title, glass panel, frame and grade left, reading right, picks below |
+| `src/names.js`                | words for decisions: chord names from voicings, the key, a tempo word for activity — names only, never decides |
+| `src/useBand.js`              | which band the engine says it is playing, from `core.tap`                                       |
+| `src/components/Reading.jsx`  | the readout as six silhouettes (key, bulb, metronome, notes, speaker, drop) that fill with the shot, and a HEARD list — every value the tape printed |
 | `src/components/Frame.jsx`    | the frame as transport, and the marks drawn over it                                             |
-| `src/components/PrinterPoints.jsx` | the four grade controls as scrubbed numerals                                               |
-| `src/components/Sources.jsx`  | plates and your own file, as numerals                                                           |
-| `src/skin.css`                | the Tailwind theme: field, ink, Ribes. The accent is a live custom property, never a token      |
+| `src/components/PrinterPoints.jsx` | the four grade controls as scrubbed numerals in boxed counters                             |
+| `src/components/Sources.jsx`  | your own file and the three plates, as boxed toggles                                            |
+| `src/components/Picks.jsx`    | my picks as labelled hearts; a pick says its key only once it has been heard                    |
+| `src/components/Ticker.jsx`   | the strip along the bottom, saying what is playing                                              |
+| `src/skin.css`                | the Tailwind theme: pink light, one glowing red, four OFL faces (see `public/fonts/FONTS.txt`)  |
 | `LOG.md`                      | the build log — what was tried and killed, and why                                              |
 
 The picture never works out what is sounding for itself. `Engine.say` schedules
