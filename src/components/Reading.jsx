@@ -72,7 +72,7 @@ export function Reading({ reading, title, band, still }) {
         {title}
       </h2>
 
-      <svg viewBox="0 0 600 400" className="mt-[14px] mb-[6px] block w-full max-w-[480px] overflow-visible max-[900px]:max-w-full" aria-hidden>
+      <svg viewBox="0 0 600 400" className="mt-[14px] mb-[6px] block w-full max-w-[340px] overflow-visible max-[900px]:max-w-full" aria-hidden>
         <defs>
           <pattern id="shot" patternUnits="userSpaceOnUse" width="600" height="400">
             {still && <image href={still} width="600" height="400" preserveAspectRatio="xMidYMid slice" />}

@@ -4,6 +4,7 @@ import { useBand } from './useBand.js'
 import { chordName, keyName, tempoWord, shortName } from './names.js'
 import { shot, shotsFor } from './tmdb.js'
 import { triage } from './triage.js'
+import { PICKS } from './picks.js'
 import { Reel } from './components/Reel.jsx'
 import { PrinterPoints } from './components/PrinterPoints.jsx'
 import { Sources } from './components/Sources.jsx'
@@ -64,6 +65,15 @@ export default function App() {
       setBusy(false)
     }
   }, [core, reveal])
+
+  // The page opens on the first of my picks, After Hours, rather than a plate.
+  // Once only: a plate or a film chosen after that is left alone.
+  const opened = useRef(false)
+  useEffect(() => {
+    if (!core || opened.current) return
+    opened.current = true
+    onFilm(PICKS[0])
+  }, [core, onFilm])
 
   // The gate is reached here and nowhere else. Loading goes through the same
   // path a dropped file takes, so the printer points, the analysis and the
@@ -150,7 +160,7 @@ export default function App() {
         ref={panelRef}
         className="glass relative mt-[20px] scroll-mt-[12px] grid grid-cols-[var(--gate)_minmax(0,1fr)] gap-[34px] rounded-[26px] p-[22px]
                    max-[900px]:grid-cols-1 max-[900px]:gap-[20px] max-[900px]:rounded-[18px] max-[900px]:p-[12px]"
-        style={{ '--gate': 'min(62%, clamp(420px, calc((100svh - 590px) * 16 / 9), 980px))' }}
+        style={{ '--gate': 'min(68%, clamp(480px, calc((100svh - 490px) * 16 / 9), 1120px))' }}
       >
         {['-left-[11px] -top-[11px]', '-right-[11px] -top-[11px]', '-left-[11px] -bottom-[11px]', '-right-[11px] -bottom-[11px]'].map(p => (
           <svg key={p} aria-hidden className={`absolute h-[22px] w-[22px] ${p}`}><use href="#star" /></svg>
